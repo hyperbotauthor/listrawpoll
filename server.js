@@ -6,6 +6,9 @@ const MongoClient = require('mongodb').MongoClient
 const uri = process.env.MONGODB_URI
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
+const passport = require('passport')
+const LichessStrategy = require('passport-lichess').Strategy
+
 let collection = null
 
 client.connect(err => {
@@ -17,7 +20,80 @@ client.connect(err => {
 	}
 })
 
+app.use(require('cookie-parser')())
+
 app.use(require('body-parser').json())
+
+app.use(require('body-parser').urlencoded({ extended: true }))
+
+const session = require('express-session')    
+
+const MongoStore = require('connect-mongo')(session)
+
+const mongoStoreOptions = {
+	client: client
+}
+
+const sessionProps= {
+	secret: 'keyboard cat',
+	resave: process.env.RESAVE == "true",
+	saveUninitialized: process.env.SAVE_UNINITIALIZED == "true",
+	cookie: {
+		maxAge: ( 1 * 366 * 31 * 24 * 60 * 60 * 1000 )
+	},
+	store: new MongoStore(mongoStoreOptions)
+}
+
+app.use(session(sessionProps))
+
+app.use(passport.initialize())
+
+app.use(passport.session())
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user)
+})
+  
+passport.deserializeUser(function(obj, cb) {
+    cb(null, obj)
+})
+
+function getHostProtAndUrl(props){
+    let host = process.env.SITE_HOST || props.SITE_HOST || "localhost:3000"
+    let prot = host.match(/^localhost:/) ? "http://" : "https://"
+    let url = prot + host + props.authURL
+    return [host, prot, url]
+}
+
+function addLichessStrategy(app, props){
+    let [host, prot, url] = getHostProtAndUrl(props)
+    passport.use(props.tag, new LichessStrategy({
+        clientID: props.clientID,
+        clientSecret: props.clientSecret,
+        callbackURL: url + "/callback",
+        scope: props.scope || ""
+        },
+        function(accessToken, refreshToken, profile, cb) {
+            console.log(`id : ${profile.id}\naccessToken : ${accessToken}\nrefreshToken : ${refreshToken}`)
+		
+            profile.accessToken = accessToken
+				
+            return cb(null, profile)
+        }
+    ))
+	
+	app.get(props.authURL,
+        passport.authenticate(props.tag))
+
+    app.get(props.authURL + "/callback", 
+        passport.authenticate(props.tag, { failureRedirect: prot + host + props.failureRedirect }),
+            function(req, res) {
+				console.log("auth req user", req.user)
+		
+				res.redirect(prot + host + props.okRedirect)
+            }
+    )
+}
 
 app.use("/", express.static(__dirname))
 
