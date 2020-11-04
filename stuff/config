@@ -14,6 +14,6 @@
 	email = hyperchessbotauthor@gmail.com
 	[credential "https://github.com/hyperbotauthor/mongodbtest"]
 		username = hyperbotauthor
-	[credential "https://gitlab.com/hyperbotauthor/mongodbtest"]
-		username = hyperbotauthor
+	[credential "https://gitlab.com/hyperchessbotauthor/mongodbtest"]
+		username = hyperchessbotauthor
 	
