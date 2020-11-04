@@ -17,7 +17,31 @@ client.connect(err => {
 	}
 })
 
+app.use(require('body-parser').json())
+
 app.use("/", express.static(__dirname))
+
+function apiSend(res, blob){
+	res.set('Content-Type', 'application/json')
+	
+	res.send(JSON.stringify(blob))
+}
+
+app.post('/api', (req, res) => {
+	let body = req.body
+	
+	let topic = body.topic
+	
+	if(topic == "listDatabases"){
+		client.db("admin").admin().listDatabases().then(result => {
+			console.log(result)
+			
+			apiSend(res, result)
+		})
+		
+		return
+	}
+})
 
 app.get('/findone', (req, res) => {
 	collection.findOne().then(doc => {
