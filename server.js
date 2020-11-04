@@ -162,7 +162,12 @@ app.get('/', (req, res) => {
     <script src="https://unpkg.com/@easychessanimations/foo/lib/fooweb.js"></script>
   </head>
   <body>
+
+	<div style="padding: 3px; background-color: #eee; margin: 3px;">
+
 	${req.user ? "logged in as <b>" + req.user.username + "</b> <a href='/logout'>log out</a>" : "<a href='/auth/lichess/bot'>log in with lichess bot</a>"}
+	</div>
+
     <div id="root"></div>
 	<script src="app.js"></script>
   </body>
