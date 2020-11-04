@@ -102,7 +102,7 @@ function Collection(props){return new Collection_(props)}
 function listDatabases(){
 	api("listDatabases").then(result => {
 		listDatabasesDiv.x().a(
-			result.databases.map(database => Database({...database, ...{api: api}}))
+			result.databases.filter(database => !["admin", "local"].includes(database.name)).map(database => Database({...database, ...{api: api}}))
 		)
 	})
 }
