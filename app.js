@@ -40,8 +40,6 @@ class Database_ extends SmartdomElement_{
 		this.empty = this.props.empty
 		
 		this.build()
-		
-		this.getCollectionsNames()
 	}
 	
 	build(){
@@ -49,18 +47,22 @@ class Database_ extends SmartdomElement_{
 			div().ffms().mar(2).fl().a(
 				div().fs(16).w(300).pad(3).bc("#ffe").fwb().html(this.name),
 				div().fl().w(600).pad(3).bc("#eee").a(
-					div().mar(2).w(300).pad(2).bc("#ddd").html(`size on disk : ${this.sizeOnDisk}`),
-					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`)
+					button(_=>this.listCollections()).html("Get collection names"),
+					div().mar(2).marl(10).w(200).pad(2).bc("#ddd").html(`size on disk : ${this.sizeOnDisk}`),
+					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`)					
 				)
 			),
 			this.collectionsDiv = div()
-		)
+		)		
 		
 		return this
 	}
 	
-	getCollectionsNames(){
-		
+	listCollections(){
+		console.log("getc")
+		this.api("listCollections", {dbName: this.name}).then(result => {
+			this.collectionsDiv.a(result.map(collection => div().html(collection.name)))
+		})
 	}
 }
 function Database(props){return new Database_(props)}

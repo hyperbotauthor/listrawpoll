@@ -32,14 +32,20 @@ app.post('/api', (req, res) => {
 	
 	let topic = body.topic
 	
+	let payload = body.payload
+	
+	console.log("api", topic, payload)
+	
 	if(topic == "listDatabases"){
 		client.db("admin").admin().listDatabases().then(result => {
-			console.log(result)
-			
 			apiSend(res, result)
 		})
-		
-		return
+	}
+	
+	if(topic == "listCollections"){
+		client.db(payload.dbName).listCollections().toArray().then(result => {
+			apiSend(res, result)
+		}, err => console.log("listing collections failed", err))
 	}
 })
 
