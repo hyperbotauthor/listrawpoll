@@ -85,7 +85,7 @@ class Collection_ extends SmartdomElement_{
 					button(_=>this.getSample()).html("Get sample")
 				)
 			),
-			this.documentDiv = div().pad(3).mar(3).bc("#eee")
+			this.documentDiv = div().mar(3).marl(10).pad(3).bc("#eee")
 		)		
 		
 		return this
@@ -93,11 +93,48 @@ class Collection_ extends SmartdomElement_{
 	
 	getSample(){
 		api("getSample", {dbName: this.parentDatabase.name, collName: this.name}).then(result => {
-			this.documentDiv.html("<pre>" + JSON.stringify(result, null, 2) + "</pre>")
+			this.documentDiv.x().a(Value({value: result}))
 		})
 	}
 }
 function Collection(props){return new Collection_(props)}
+
+class Value_ extends SmartdomElement_{
+	constructor(props){
+		super({...props, ...{tagName: "div"}})
+		
+		this.value = props.value
+		
+		this.build()
+	}
+	
+	build(){
+		if(typeof this.value == "object"){
+			if(Array.isArray(this.value)){
+				this.x().a(
+					this.value.map(item => Value({value: item}))
+				)
+			}else{
+				this.x().a(
+					Object.entries(this.value).map(entry => div().bc("#79d").pad(2).mar(2).fl().aic().a(
+						div().pad(2).bc("#aff").w(150).fwb().html(entry[0]),
+						div().marl(3).pad(2).bc("#fef").a(Value({value: entry[1]}))
+					))
+				)
+			}
+		}else{
+			if(typeof this.value == "number"){
+				this.mar(1).pad(2).bc("#fff").ffms().fs(18).c("#070").fwb().html(`${this.value}`)	
+			}else{
+				this.mar(1).pad(2).bc("#fff").c("#007").html(`${this.value}`)
+			}			
+		}
+		
+		return this
+	}
+}
+function Value(props){return new Value_(props)}
+
 
 function listDatabases(){
 	api("listDatabases").then(result => {
