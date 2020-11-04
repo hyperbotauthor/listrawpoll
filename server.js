@@ -47,6 +47,12 @@ app.post('/api', (req, res) => {
 			apiSend(res, result)
 		}, err => console.log("listing collections failed", err))
 	}
+	
+	if(topic == "getSample"){
+		client.db(payload.dbName).collection(payload.collName).aggregate([{$sample: {size: payload.size || 1}}]).toArray().then(result => {
+			apiSend(res, result)
+		}, err => console.log("sampling collection failed", err))
+	}
 })
 
 app.get('/findone', (req, res) => {

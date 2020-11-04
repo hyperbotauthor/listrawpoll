@@ -60,7 +60,7 @@ class Database_ extends SmartdomElement_{
 	
 	listCollections(){		
 		this.api("listCollections", {dbName: this.name}).then(result => {
-			this.collectionsDiv.x().a(result.map(collection => Collection(collection)))
+			this.collectionsDiv.x().a(result.map(collection => Collection({...collection, ...{parentDatabase: this}})))
 		})
 	}
 }
@@ -70,7 +70,7 @@ class Collection_ extends SmartdomElement_{
 	constructor(props){
 		super({...props, ...{tagName: "div"}})
 		
-		this.api = this.props.api
+		this.parentDatabase = this.props.parentDatabase
 		
 		this.name = this.props.name		
 		
@@ -82,13 +82,20 @@ class Collection_ extends SmartdomElement_{
 			div().ffms().mar(2).fl().a(
 				div().fs(16).w(300).pad(3).bc("#eff").fwb().html(this.name),
 				div().fl().w(600).pad(3).bc("#eee").a(
-					
+					button(_=>this.getSample()).html("Get sample")
 				)
-			)
+			),
+			this.documentDiv = div().pad(3).mar(3).bc("#eee")
 		)		
 		
 		return this
 	}	
+	
+	getSample(){
+		api("getSample", {dbName: this.parentDatabase.name, collName: this.name}).then(result => {
+			this.documentDiv.html("<pre>" + JSON.stringify(result, null, 2) + "</pre>")
+		})
+	}
 }
 function Collection(props){return new Collection_(props)}
 
