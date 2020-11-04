@@ -110,7 +110,7 @@ class Value_ extends SmartdomElement_{
 	
 	build(){
 		if(typeof this.value == "object"){
-			if(!value){
+			if(!this.value){
 				this.x().mar(2).pad(2).bc("#f00").html("null")
 			}else if(Array.isArray(this.value)){
 				this.x().mar(2).bdrs("solid").bdrw(1).bdrc("#700").a(
