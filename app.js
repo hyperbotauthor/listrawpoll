@@ -29,9 +29,47 @@ function api(topic, payload){
 
 let listDatabasesDiv = div()
 
+class Database_ extends SmartdomElement_{
+	constructor(props){
+		super({...props, ...{tagName: "div"}})
+		
+		this.api = this.props.api
+		
+		this.name = this.props.name
+		this.sizeOnDisk = this.props.sizeOnDisk
+		this.empty = this.props.empty
+		
+		this.build()
+		
+		this.getCollectionsNames()
+	}
+	
+	build(){
+		this.a(
+			div().ffms().mar(2).fl().a(
+				div().fs(16).w(300).pad(3).bc("#ffe").fwb().html(this.name),
+				div().fl().w(600).pad(3).bc("#eee").a(
+					div().mar(2).w(300).pad(2).bc("#ddd").html(`size on disk : ${this.sizeOnDisk}`),
+					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`)
+				)
+			),
+			this.collectionsDiv = div()
+		)
+		
+		return this
+	}
+	
+	getCollectionsNames(){
+		
+	}
+}
+function Database(props){return new Database_(props)}
+
 function listDatabases(){
 	api("listDatabases").then(result => {
-		listDatabasesDiv.html(`<hr>result : <pre>${JSON.stringify(result, null, 2)}</pre><hr>`)
+		listDatabasesDiv.a(
+			result.databases.map(database => Database({...database, ...{api: api}}))
+		)
 	})
 }
 
@@ -41,3 +79,5 @@ let app = div().bc("#0f0").pad(10).a(
 )
 
 document.getElementById("root").appendChild(app.e)
+
+listDatabases()
