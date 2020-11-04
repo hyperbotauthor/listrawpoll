@@ -111,22 +111,22 @@ class Value_ extends SmartdomElement_{
 	build(){
 		if(typeof this.value == "object"){
 			if(Array.isArray(this.value)){
-				this.x().a(
+				this.x().mar(2).bdrs("solid").bdrw(1).bdrc("#700").a(
 					this.value.map(item => Value({value: item}))
 				)
 			}else{
-				this.x().a(
+				this.x().mar(2).bdrs("solid").bdrw(1).bdrc("#070").a(
 					Object.entries(this.value).map(entry => div().bc("#79d").pad(2).mar(2).fl().aic().a(
 						div().pad(2).bc("#aff").w(150).fwb().html(entry[0]),
-						div().marl(3).pad(2).bc("#fef").a(Value({value: entry[1]}))
+						div().marl(3).pad(2).bc("#aaa").a(Value({value: entry[1]}))
 					))
 				)
 			}
 		}else{
 			if(typeof this.value == "number"){
-				this.mar(1).pad(2).bc("#fff").ffms().fs(18).c("#070").fwb().html(`${this.value}`)	
+				this.mar(2).pad(2).bc("#fff").ffms().fs(18).c("#070").fwb().html(`${this.value}`)	
 			}else{
-				this.mar(1).pad(2).bc("#fff").c("#007").html(`${this.value}`)
+				this.mar(2).pad(2).bc("#fff").c("#007").html(`${this.value}`)
 			}			
 		}
 		
