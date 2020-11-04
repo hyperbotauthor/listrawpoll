@@ -101,7 +101,7 @@ function Collection(props){return new Collection_(props)}
 
 function listDatabases(){
 	api("listDatabases").then(result => {
-		listDatabasesDiv.a(
+		listDatabasesDiv.x().a(
 			result.databases.map(database => Database({...database, ...{api: api}}))
 		)
 	})
