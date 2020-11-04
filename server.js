@@ -95,6 +95,16 @@ function addLichessStrategy(app, props){
     )
 }
 
+addLichessStrategy(app, {
+    tag: "lichess-bot",
+    clientID: process.env.LICHESS_BOT_CLIENT_ID || "some client id",
+    clientSecret: process.env.LICHESS_BOT_CLIENT_SECRET || "some client secret",
+    authURL: "/auth/lichess/bot",
+    scope: "challenge:read challenge:write bot:play",
+    failureRedirect: "/?lichessbotlogin=failed",
+    okRedirect: "/?lichessbotlogin=ok"
+})
+
 app.use("/", express.static(__dirname))
 
 function apiSend(res, blob){
@@ -147,6 +157,7 @@ app.get('/', (req, res) => {
     <script src="https://unpkg.com/@easychessanimations/foo/lib/fooweb.js"></script>
   </head>
   <body>
+	${req.user ? "logged in as <b>" + req.user.username + "</b> <a href='/logout'>log out</a>" : "<a href='/auth/lichess/bot'>log in with lichess bot</a>"}
     <div id="root"></div>
 	<script src="app.js"></script>
   </body>
