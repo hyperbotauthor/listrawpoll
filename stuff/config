@@ -1,0 +1,14 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/hyperbotauthor/mongodbtest
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[user]
+	name = hyperbotauthor
+	email = hyperchessbotauthor@gmail.com
+	[credential "https://github.com/hyperbotauthor/mongodbtest"]
+		username = hyperbotauthor
+	
