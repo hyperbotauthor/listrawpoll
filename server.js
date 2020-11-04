@@ -113,6 +113,11 @@ function apiSend(res, blob){
 	res.send(JSON.stringify(blob))
 }
 
+app.get('/logout', (req, res) => {
+	req.logout()
+	res.redirect("/")
+})
+
 app.post('/api', (req, res) => {
 	let body = req.body
 	
