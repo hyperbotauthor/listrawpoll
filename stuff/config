@@ -7,7 +7,7 @@
 	url = https://github.com/hyperbotauthor/mongodbtest
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "gitlab"]
-	url = https://gitlab.com/hyperbotauthor/mongodbtest
+	url = https://gitlab.com/hyperchessbotauthor/mongodbtest
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [user]
 	name = hyperbotauthor
