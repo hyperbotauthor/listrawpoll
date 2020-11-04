@@ -45,27 +45,52 @@ class Database_ extends SmartdomElement_{
 	build(){
 		this.a(
 			div().ffms().mar(2).fl().a(
-				div().fs(16).w(300).pad(3).bc("#ffe").fwb().html(this.name),
+				div().fs(16).w(300).pad(3).bc("#ffe").fwb().html(this.name).curp().ae("click", _=>this.listCollections()),
 				div().fl().w(600).pad(3).bc("#eee").a(
 					button(_=>this.listCollections()).html("Get collection names"),
 					div().mar(2).marl(10).w(200).pad(2).bc("#ddd").html(`size on disk : ${this.sizeOnDisk}`),
 					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`)					
 				)
 			),
-			this.collectionsDiv = div()
+			this.collectionsDiv = div().marl(20)
 		)		
 		
 		return this
 	}
 	
-	listCollections(){
-		console.log("getc")
+	listCollections(){		
 		this.api("listCollections", {dbName: this.name}).then(result => {
-			this.collectionsDiv.a(result.map(collection => div().html(collection.name)))
+			this.collectionsDiv.x().a(result.map(collection => Collection(collection)))
 		})
 	}
 }
 function Database(props){return new Database_(props)}
+
+class Collection_ extends SmartdomElement_{
+	constructor(props){
+		super({...props, ...{tagName: "div"}})
+		
+		this.api = this.props.api
+		
+		this.name = this.props.name		
+		
+		this.build()
+	}
+	
+	build(){
+		this.a(
+			div().ffms().mar(2).fl().a(
+				div().fs(16).w(300).pad(3).bc("#eff").fwb().html(this.name),
+				div().fl().w(600).pad(3).bc("#eee").a(
+					
+				)
+			)
+		)		
+		
+		return this
+	}	
+}
+function Collection(props){return new Collection_(props)}
 
 function listDatabases(){
 	api("listDatabases").then(result => {
