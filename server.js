@@ -71,8 +71,6 @@ app.get('/', (req, res) => {
     <script src="https://unpkg.com/@easychessanimations/foo/lib/fooweb.js"></script>
   </head>
   <body>
-	<a href="/findone" rel="noopener noreferrer" target="_blank">find one</a>
-	<hr>
     <div id="root"></div>
 	<script src="app.js"></script>
   </body>
