@@ -6,9 +6,14 @@
 [remote "origin"]
 	url = https://github.com/hyperbotauthor/mongodbtest
 	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "gitlab"]
+	url = https://gitlab.com/hyperbotauthor/mongodbtest
+	fetch = +refs/heads/*:refs/remotes/origin/*
 [user]
 	name = hyperbotauthor
 	email = hyperchessbotauthor@gmail.com
 	[credential "https://github.com/hyperbotauthor/mongodbtest"]
+		username = hyperbotauthor
+	[credential "https://gitlab.com/hyperbotauthor/mongodbtest"]
 		username = hyperbotauthor
 	
