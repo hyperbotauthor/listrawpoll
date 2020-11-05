@@ -1,3 +1,7 @@
+function IS_PROD(){
+	return !!process.env.SITE_HOST
+}
+
 const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT || "3000")
@@ -118,7 +122,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/api', (req, res) => {
-	if(!req.user){
+	if(IS_PROD()) if(!req.user){
 		let msg = "Warning: You should be logged in to be able to use the API."
 		
 		console.warn(msg)
@@ -189,8 +193,21 @@ app.post('/api', (req, res) => {
 		}, err => console.error("sampling collection failed", err))
 	}
 	
+	if(topic == "getAll"){
+		client.db("app").collection("transactions").find({}).toArray().then(result => {
+			apiSend(res, result)
+		}, err => console.error("getting all documents failed", err))
+	}
+	
 	if(topic == "updateOne"){
 		client.db(payload.dbName).collection(payload.collName).updateOne(payload.filter, {$set: payload.doc}, payload.options).then(result => {
+			apiSend(res, result)
+		})
+	}
+	
+	if(topic == "addTransaction"){
+		let tr = payload.transaction
+		client.db("app").collection("transactions").insertOne(tr).then(result => {
 			apiSend(res, result)
 		})
 	}
