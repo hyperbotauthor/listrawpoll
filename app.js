@@ -224,6 +224,6 @@ document.getElementById("root").appendChild(app.e)
 setupSource(blob => {
 	console.log("sse", blob)
 	if(blob.topic == "addTransaction"){
-		app.addTransaction(Transaction(blob.transaction))
+		app.state.addTransaction(Transaction(blob.transaction))
 	}
 }, TICK_INTERVAL)
