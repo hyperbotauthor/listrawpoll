@@ -230,6 +230,8 @@ docInput.setText(`{
   "foo": "bar"
 }`)
 
+let app = div().pad(3).bc("#ffe").fs(20).html(`Lichess Straw Poll.`)
+
 document.getElementById("root").appendChild(app.e)
 
 listDatabases()
