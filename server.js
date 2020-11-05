@@ -38,7 +38,7 @@ const sessionProps= {
 	resave: process.env.RESAVE == "true",
 	saveUninitialized: process.env.SAVE_UNINITIALIZED == "true",
 	cookie: {
-		maxAge: ( 1 * 366 * 31 * 24 * 60 * 60 * 1000 )
+		maxAge: parseInt( process.env.COOKIE_MAX_AGE || 1 * 366 * 31 * 24 * 60 * 60 * 1000 )
 	},
 	store: new MongoStore(mongoStoreOptions)
 }
@@ -99,7 +99,8 @@ addLichessStrategy(app, {
     clientID: process.env.LICHESS_BOT_CLIENT_ID || "some client id",
     clientSecret: process.env.LICHESS_BOT_CLIENT_SECRET || "some client secret",
     authURL: "/auth/lichess/bot",
-    scope: "challenge:read challenge:write bot:play",
+    //scope: "challenge:read challenge:write bot:play",
+	scope: "",
     failureRedirect: "/?lichessbotlogin=failed",
     okRedirect: "/?lichessbotlogin=ok"
 })
