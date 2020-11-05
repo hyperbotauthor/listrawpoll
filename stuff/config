@@ -17,3 +17,9 @@
 	[credential "https://gitlab.com/hyperchessbotauthor/listrawpoll.git"]
 		username = hyperchessbotauthor
 	
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[remote "upstream"]
+	url = https://github.com/hyperbotauthor/listrawpoll
+	fetch = +refs/heads/*:refs/remotes/upstream/*
