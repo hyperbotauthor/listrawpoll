@@ -47,15 +47,38 @@ class Poll_ extends SmartdomElement_{
 		super({...props, ...{tagName: "div"}})
 		
 		this.poll = this.props.poll || "Poll?"
+		this.pollId = this.props.pollId || UID()
+		
+		this.api = this.props.api || api
 		
 		this.pad(2).mar(2).bc("#eee").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
 		
 		this.build()
 	}
 	
+	addTransaction(tr){
+		this.api("addTransaction", {
+			transaction: tr.serialize()
+		}).then(result => {
+			console.log(result)			
+		})	
+	}
+	
+	delete(){
+		let tr = Transaction({
+			topic: "deletePoll",			
+			pollId: this.pollId
+		})
+		
+		this.addTransaction(tr)
+	}
+	
 	build(){
 		this.x().a(
-			div().fs(20).mar(2).pad(2).bc("#ffe").html(this.poll)
+			div().fl().aic().a(
+				div().w(600).fs(20).mar(2).pad(2).bc("#ffe").html(this.poll),
+				button(_ => this.delete()).html("Delete").bc("#faa")
+			)
 		)
 		
 		return this
@@ -84,6 +107,10 @@ class State_ extends SmartdomElement_{
 		for(let tr of trs){
 			if(tr.topic == "createPoll"){
 				this.polls.push(Poll(tr.props))
+			}
+			
+			if(tr.topic == "deletePoll"){
+				this.polls = this.polls.filter(poll => poll.pollId != tr.pollId)
 			}
 			
 			this.execTrIds[tr.id] = true
@@ -131,6 +158,7 @@ class Transaction_ extends SmartdomElement_{
 		
 		if(this.topic == "createPoll"){
 			blob.poll = this.props.poll
+			blob.pollId = this.props.pollId
 		}
 		
 		return blob
@@ -162,10 +190,6 @@ class Transaction_ extends SmartdomElement_{
 }
 function Transaction(props){return new Transaction_(props)}
 
-let transactions = [
-	Transaction({topic: "createPoll", poll: "Should we do this?"})
-]
-
 class App_ extends SmartdomElement_{
 	constructor(props){
 		super({...props, ...{tagName: "div"}})
@@ -187,7 +211,8 @@ class App_ extends SmartdomElement_{
 		if(poll){
 			let tr = Transaction({
 				topic: "createPoll",
-				poll: poll
+				poll: poll,
+				pollId: UID()
 			})
 			
 			this.addTransaction(tr)
