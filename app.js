@@ -220,3 +220,10 @@ function App(props){return new App_(props)}
 let app = App()
 
 document.getElementById("root").appendChild(app.e)
+
+setupSource(blob => {
+	console.log("sse", blob)
+	if(blob.topic == "addTransaction"){
+		app.addTransaction(Transaction(blob.transaction))
+	}
+}, TICK_INTERVAL)

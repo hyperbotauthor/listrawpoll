@@ -2,6 +2,8 @@ function IS_PROD(){
 	return !!process.env.SITE_HOST
 }
 
+const sse = require('@easychessanimations/sse')
+
 const express = require('express')
 const app = express()
 const port = parseInt(process.env.PORT || "3000")
@@ -116,6 +118,10 @@ function apiSend(res, blob){
 	res.send(JSON.stringify(blob))
 }
 
+app.use(sse.sseMiddleware)
+
+sse.setupStream(app)
+
 app.get('/logout', (req, res) => {
 	req.logout()
 	res.redirect("/")
@@ -209,6 +215,11 @@ app.post('/api', (req, res) => {
 		let tr = payload.transaction
 		client.db("app").collection("transactions").insertOne(tr).then(result => {
 			apiSend(res, result)
+			
+			sse.ssesend({
+				topic: "addTransaction",
+				transaction: payload.transaction
+			})
 		})
 	}
 })
@@ -221,6 +232,7 @@ app.get('/', (req, res) => {
     <meta charset="utf-8">
     <title>Lichess Straw Poll</title>    
     <script src="https://unpkg.com/@easychessanimations/foo@1.0.43/lib/fooweb.js"></script>
+	<script src="https://unpkg.com/@easychessanimations/sse/lib/sseclient.js"></script>
   </head>
   <body>
 
@@ -231,6 +243,7 @@ app.get('/', (req, res) => {
     <div id="root"></div>
 	<script>
 		var USER = ${JSON.stringify(req.user || {}, null, 2)}
+		var TICK_INTERVAL = ${sse.TICK_INTERVAL}
 	</script>
 	<script src="app.js"></script>
   </body>
