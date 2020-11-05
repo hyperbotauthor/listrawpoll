@@ -75,7 +75,7 @@ class Poll_ extends SmartdomElement_{
 	
 	build(){
 		this.x().a(
-			div().fl().aic().a(
+			div().fl().aic().jc("space-between").a(
 				div().w(600).fs(20).mar(2).pad(2).bc("#ffe").html(this.poll),
 				button(_ => this.delete()).html("Delete").bc("#faa")
 			)
@@ -245,9 +245,6 @@ class App_ extends SmartdomElement_{
 			transaction: tr.serialize()
 		}).then(result => {
 			console.log(result)
-			if(result.ok){				
-				this.state.addTransaction(tr)
-			}
 		})
 	}
 }
