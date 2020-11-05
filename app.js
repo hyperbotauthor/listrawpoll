@@ -227,8 +227,8 @@ let app = App()
 
 document.getElementById("root").appendChild(app.e)
 
-setupSource(blob => {
-	console.log("sse", blob)
+setupSource(blob => {	
+	if(blob.kind != "tick") console.info(blob)
 	if(blob.topic == "addTransaction"){
 		app.state.addTransaction(Transaction(blob.transaction))
 	}
