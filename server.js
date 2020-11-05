@@ -128,6 +128,8 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/api', (req, res) => {
+	let body = req.body
+	
 	let topic = body.topic
 	
 	if(IS_PROD()) if( (!req.user) && (!["getAll"].includes(topic)) ){
@@ -141,8 +143,6 @@ app.post('/api', (req, res) => {
 		
 		return
 	}
-	
-	let body = req.body
 	
 	let payload = body.payload
 	
