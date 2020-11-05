@@ -128,7 +128,9 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/api', (req, res) => {
-	if(IS_PROD()) if(!req.user){
+	let topic = body.topic
+	
+	if(IS_PROD()) if( (!req.user) && (!["getAll"].includes(topic)) ){
 		let msg = "Warning: You should be logged in to be able to use the API."
 		
 		console.warn(msg)
@@ -141,8 +143,6 @@ app.post('/api', (req, res) => {
 	}
 	
 	let body = req.body
-	
-	let topic = body.topic
 	
 	let payload = body.payload
 	
