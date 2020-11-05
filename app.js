@@ -27,10 +27,9 @@ function api(topic, payload){
 	)	
 }
 
-let app = div().pad(3).bc("#ffe").fs(20).html(`Lichess Straw Poll.`)
-
-if(USER.id){
-	app.a(div().mart(10).html("<pre>" + JSON.stringify(USER, null, 2) + "</pre>"))
-}
+let app = div().a(
+	div().pad(3).bc("#ffe").fs(20).html(`Lichess Straw Poll.`),
+	div().pad(3).mart(10).bc("#eef").html("<pre>" + JSON.stringify(USER, null, 2) + "</pre>")
+)
 
 document.getElementById("root").appendChild(app.e)
