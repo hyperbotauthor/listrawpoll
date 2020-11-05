@@ -1,6 +1,6 @@
 # mongodbtest
 
-MongoDb test.
+MongoDb test application.
 
 ## Motivation
 
