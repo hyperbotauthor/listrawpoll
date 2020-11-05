@@ -162,6 +162,10 @@ class Transaction_ extends SmartdomElement_{
 			blob.pollId = this.props.pollId
 		}
 		
+		if(this.topic == "deletePoll"){			
+			blob.pollId = this.props.pollId
+		}
+		
 		return blob
 	}
 	
