@@ -42,6 +42,16 @@ class Database_ extends SmartdomElement_{
 		this.build()
 	}
 	
+	dropDatabase(){
+		this.api("dropDatabase", {dbName: this.name}).then(result => {
+			if(result.err){
+				window.alert(`${JSON.stringify(result.err)}`)
+			}else{
+				this.x().pad(2).mar(2).bc("#f00").html(`${this.name} dropped`)
+			}
+		})
+	}
+	
 	build(){
 		this.a(
 			div().ffms().mar(2).fl().a(
@@ -49,7 +59,8 @@ class Database_ extends SmartdomElement_{
 				div().fl().w(600).pad(3).bc("#eee").a(
 					button(_=>this.listCollections()).html("Get collection names"),
 					div().mar(2).marl(10).w(200).pad(2).bc("#ddd").html(`size on disk : ${this.sizeOnDisk}`),
-					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`)					
+					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`),
+					button(_=>this.dropDatabase()).html("Drop database").bc("#faa").marl(10)
 				)
 			),
 			this.collectionsDiv = div().marl(20)
@@ -72,9 +83,21 @@ class Collection_ extends SmartdomElement_{
 		
 		this.parentDatabase = this.props.parentDatabase
 		
+		this.api = this.parentDatabase.api
+		
 		this.name = this.props.name		
 		
 		this.build()
+	}
+	
+	dropCollection(){
+		this.api("dropCollection", {dbName: this.parentDatabase.name, collName: this.name}).then(result => {
+			if(result.err){
+				window.alert(`${JSON.stringify(result.err)}`)
+			}else{
+				this.x().pad(2).mar(2).bc("#f00").html(`${this.name} dropped`)
+			}
+		})
 	}
 	
 	build(){
@@ -82,7 +105,8 @@ class Collection_ extends SmartdomElement_{
 			div().ffms().mar(2).fl().a(
 				div().fs(16).w(300).pad(3).bc("#eff").fwb().html(this.name),
 				div().fl().w(600).pad(3).bc("#eee").a(
-					button(_=>this.getSample()).html("Get sample")
+					button(_=>this.getSample()).html("Get sample"),
+					button(_=>this.dropCollection()).html("Drop collection").bc("#faa").marl(10)
 				)
 			),
 			this.documentDiv = div().mar(3).marl(10).pad(3).bc("#eee")
@@ -92,7 +116,7 @@ class Collection_ extends SmartdomElement_{
 	}	
 	
 	getSample(){
-		api("getSample", {dbName: this.parentDatabase.name, collName: this.name}).then(result => {
+		this.api("getSample", {dbName: this.parentDatabase.name, collName: this.name}).then(result => {
 			this.documentDiv.x().a(Value({value: result}))
 		})
 	}
@@ -147,7 +171,7 @@ function listDatabases(){
 }
 
 let app = div().bc("#0f0").pad(10).a(	
-	button(listDatabases).html("List databases"),
+	button(listDatabases).marb(10).html("List databases"),
 	listDatabasesDiv
 )
 

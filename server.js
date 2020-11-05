@@ -139,6 +139,20 @@ app.post('/api', (req, res) => {
 		}, err => console.log("listing collections failed", err))
 	}
 	
+	if(topic == "dropCollection"){
+		client.db(payload.dbName).dropCollection(payload.collName, (err,result) => {
+			if(err) console.log("dropping collections failed", err)
+			apiSend(res, {err: err, result: result})
+		})
+	}
+	
+	if(topic == "dropDatabase"){
+		client.db(payload.dbName).dropDatabase((err,result) => {
+			if(err) console.log("dropping database failed", err)
+			apiSend(res, {err: err, result: result})
+		})
+	}
+	
 	if(topic == "getSample"){
 		client.db(payload.dbName).collection(payload.collName).aggregate([{$sample: {size: payload.size || 1}}]).toArray().then(result => {
 			apiSend(res, result)
@@ -159,7 +173,7 @@ app.get('/', (req, res) => {
   <head>
     <meta charset="utf-8">
     <title>MongoDb Test</title>    
-    <script src="https://unpkg.com/@easychessanimations/foo/lib/fooweb.js"></script>
+    <script src="https://unpkg.com/@easychessanimations/foo@1.0.40/lib/fooweb.js"></script>
   </head>
   <body>
 
