@@ -177,7 +177,7 @@ function parseDoc(doc){
 		let blob
 		
 		try{
-			blob = JSON.parse(docInput.getText())	
+			blob = JSON.parse(doc)	
 			
 			if(typeof blob != "object"){
 				window.alert("Document should be an object.")
