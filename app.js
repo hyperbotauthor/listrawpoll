@@ -69,9 +69,10 @@ class SmartPoll_ extends SmartdomElement_{
 	build(){
 		this.x().a(
 			div().fl().aic().jc("space-between").a(
-				div().w(600).fs(20).mar(2).pad(2).bc("#ffe").html(this.poll.poll),
-				button(_ => this.delete()).html("Delete").bc("#faa")
-			)
+				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll),
+				button(_ => this.delete()).html("Delete").bc("#faa").marr(10)
+			),
+			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small>${new Date(this.poll.createdAt).toLocaleString()}</small>`)
 		)
 		
 		return this
