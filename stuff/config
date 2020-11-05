@@ -4,16 +4,16 @@
 	bare = false
 	logallrefupdates = true
 [remote "origin"]
-	url = https://github.com/hyperbotauthor/mongodbtest
+	url = https://github.com/hyperbotauthor/listrawpoll
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "gitlab"]
-	url = https://gitlab.com/hyperchessbotauthor/mongodbtest.git
+	url = https://gitlab.com/hyperchessbotauthor/listrawpoll.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [user]
 	name = hyperbotauthor
 	email = hyperchessbotauthor@gmail.com
-	[credential "https://github.com/hyperbotauthor/mongodbtest"]
+	[credential "https://github.com/hyperbotauthor/listrawpoll"]
 		username = hyperbotauthor
-	[credential "https://gitlab.com/hyperchessbotauthor/mongodbtest.git"]
+	[credential "https://gitlab.com/hyperchessbotauthor/listrawpoll.git"]
 		username = hyperchessbotauthor
 	
