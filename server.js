@@ -9,14 +9,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const passport = require('passport')
 const LichessStrategy = require('passport-lichess').Strategy
 
-let collection = null
-
 client.connect(err => {
 	if(err){
 		console.log("MongoDb connection failed", err)
 	}else{
-		console.log("MongoDb connected!")
-		collection = client.db("sample_airbnb").collection("listingsAndReviews")		
+		console.log("MongoDb connected!")		
 	}
 })
 
@@ -156,6 +153,13 @@ app.post('/api', (req, res) => {
 	}
 	
 	if(topic == "getSample"){
+		if(payload.dbName == mongoStoreOptions.dbName){
+			apiSend(res, {
+				"warning": "you are not allowed to get samples from this database for security reason"
+			})
+			
+			return
+		}
 		client.db(payload.dbName).collection(payload.collName).aggregate([{$sample: {size: payload.size || 1}}]).toArray().then(result => {
 			apiSend(res, result)
 		}, err => console.log("sampling collection failed", err))
@@ -166,12 +170,6 @@ app.post('/api', (req, res) => {
 			apiSend(res, result)
 		})
 	}
-})
-
-app.get('/findone', (req, res) => {
-	collection.findOne().then(doc => {
-		res.send("<pre>" + JSON.stringify(doc, null, 2) + "/<pre>")
-	})
 })
 
 app.get('/', (req, res) => {

@@ -54,9 +54,9 @@ class Database_ extends SmartdomElement_{
 	
 	build(){
 		this.a(
-			div().ffms().mar(2).fl().a(
+			div().ffms().mar(2).fl().aic().a(
 				div().fs(16).w(300).pad(3).bc("#ffe").fwb().html(this.name).curp().ae("click", _=>this.listCollections()),
-				div().fl().w(600).pad(3).bc("#eee").a(
+				div().fl().aic().w(600).pad(3).bc("#eee").a(
 					button(_=>this.listCollections()).html("Get collection names"),
 					div().mar(2).marl(10).w(200).pad(2).bc("#ddd").html(`size on disk : ${this.sizeOnDisk}`),
 					div().mar(2).w(100).pad(2).bc("#ddd").html(`empty : ${this.empty}`),
@@ -214,8 +214,8 @@ let app = div().w(880).bc("#0f0").pad(10).a(
 		Labeled("&nbsp;Coll name&nbsp;&nbsp;", collNameInput = TextInput({id: "collNameInput"})).marl(10),
 		button(updateDocument).bc("#afa").marl(10).html("Update document")
 	),
-	Labeled("&nbsp;Filter&nbsp;", filterInput = textarea().w(800).h(100).mart(10).marb(10).setText("{\n\n}")).ffms(),
-	Labeled("&nbsp;&nbsp;Doc&nbsp;&nbsp;&nbsp;", docInput = textarea().w(800).h(200).marb(10).setText("{\n\n}")).ffms(),
+	Labeled("&nbsp;Filter&nbsp;", filterInput = textarea().w(800).h(80).mart(10).marb(10).setText("{\n\n}")).ffms(),
+	Labeled("&nbsp;&nbsp;Doc&nbsp;&nbsp;&nbsp;", docInput = textarea().w(800).h(120).marb(10).setText("{\n\n}")).ffms(),
 	listDatabasesDiv
 )
 
