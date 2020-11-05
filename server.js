@@ -11,7 +11,7 @@ const LichessStrategy = require('passport-lichess').Strategy
 
 client.connect(err => {
 	if(err){
-		console.log("MongoDb connection failed", err)
+		console.error("MongoDb connection failed", err)
 	}else{
 		console.log("MongoDb connected!")		
 	}
@@ -136,7 +136,7 @@ app.post('/api', (req, res) => {
 	
 	let payload = body.payload
 	
-	console.log("api", topic, payload)
+	console.info("api", topic, payload)
 	
 	if(topic == "listDatabases"){
 		client.db("admin").admin().listDatabases().then(result => {
@@ -147,7 +147,7 @@ app.post('/api', (req, res) => {
 	if(topic == "listCollections"){
 		client.db(payload.dbName).listCollections().toArray().then(result => {
 			apiSend(res, result)
-		}, err => console.log("listing collections failed", err))
+		}, err => console.error("listing collections failed", err))
 	}
 	
 	if(topic == "dropCollection"){
@@ -158,7 +158,7 @@ app.post('/api', (req, res) => {
 		}
 		
 		client.db(payload.dbName).dropCollection(payload.collName, (err,result) => {
-			if(err) console.log("dropping collections failed", err)
+			if(err) console.error("dropping collections failed", err)
 			apiSend(res, {err: err, result: result})
 		})
 	}
@@ -171,7 +171,7 @@ app.post('/api', (req, res) => {
 		}
 		
 		client.db(payload.dbName).dropDatabase((err,result) => {
-			if(err) console.log("dropping database failed", err)
+			if(err) console.error("dropping database failed", err)
 			apiSend(res, {err: err, result: result})
 		})
 	}
@@ -186,7 +186,7 @@ app.post('/api', (req, res) => {
 		}
 		client.db(payload.dbName).collection(payload.collName).aggregate([{$sample: {size: payload.size || 1}}]).toArray().then(result => {
 			apiSend(res, result)
-		}, err => console.log("sampling collection failed", err))
+		}, err => console.error("sampling collection failed", err))
 	}
 	
 	if(topic == "updateOne"){
