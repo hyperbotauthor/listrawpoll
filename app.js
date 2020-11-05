@@ -144,6 +144,7 @@ class Transaction_ extends SmartdomElement_{
 		this.id = this.props.id || UID()
 		
 		this.topic = this.props.topic || "dummy"
+		this.pollId = this.props.pollId || null
 		
 		this.pad(5).mar(2).bc("#afa").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
 		
