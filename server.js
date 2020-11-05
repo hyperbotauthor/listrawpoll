@@ -118,6 +118,18 @@ app.get('/logout', (req, res) => {
 })
 
 app.post('/api', (req, res) => {
+	if(!req.user){
+		let msg = "Warning: You should be logged in to be able to use the API."
+		
+		console.warn(msg)
+		
+		apiSend(res, {
+			warn: msg
+		})
+		
+		return
+	}
+	
 	let body = req.body
 	
 	let topic = body.topic
