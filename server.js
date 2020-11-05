@@ -31,7 +31,9 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 
 const mongoStoreOptions = {
-	client: client
+	client: client,
+	dbName: "mongodbtestserveroauth",
+	collection: "users"
 }
 
 const sessionProps= {

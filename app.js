@@ -210,14 +210,25 @@ function updateDocument(){
 let app = div().w(880).bc("#0f0").pad(10).a(	
 	div().fl().marb(10).a(
 		button(listDatabases).html("List databases"),
-		Labeled("Db name", dbNameInput = TextInput({id: "dbNameInput"})).marl(10),
-		Labeled("Coll name", collNameInput = TextInput({id: "collNameInput"})).marl(10),
+		Labeled("&nbsp;Db name&nbsp;&nbsp;", dbNameInput = TextInput({id: "dbNameInput"})).marl(10),
+		Labeled("&nbsp;Coll name&nbsp;&nbsp;", collNameInput = TextInput({id: "collNameInput"})).marl(10),
 		button(updateDocument).bc("#afa").marl(10).html("Update document")
 	),
-	Labeled("&nbsp;Filter&nbsp;", filterInput = textarea().w(800).h(50).mart(10).marb(10).setText("{\n\n}")).ffms(),
+	Labeled("&nbsp;Filter&nbsp;", filterInput = textarea().w(800).h(100).mart(10).marb(10).setText("{\n\n}")).ffms(),
 	Labeled("&nbsp;&nbsp;Doc&nbsp;&nbsp;&nbsp;", docInput = textarea().w(800).h(200).marb(10).setText("{\n\n}")).ffms(),
 	listDatabasesDiv
 )
+
+dbNameInput.setText("mydb")
+collNameInput.setText("mycoll")
+filterInput.setText(`{
+  "foo": {
+    "$eq": "bar"
+  }
+}`)
+docInput.setText(`{
+  "foo": "bar"
+}`)
 
 document.getElementById("root").appendChild(app.e)
 
