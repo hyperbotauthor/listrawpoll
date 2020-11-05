@@ -202,7 +202,7 @@ app.get('/', (req, res) => {
 
     <div id="root"></div>
 	<script>
-		USER = ${JSON.stringify(req.user || {}, null, 2)}
+		var USER = ${JSON.stringify(req.user || {}, null, 2)}
 	</script>
 	<script src="app.js"></script>
   </body>
