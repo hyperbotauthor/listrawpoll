@@ -2,6 +2,8 @@ function IS_PROD(){
 	return !!process.env.SITE_HOST
 }
 
+const classes = require("./classes.js")
+
 const sse = require('@easychessanimations/sse')
 
 const express = require('express')
@@ -15,11 +17,19 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const passport = require('passport')
 const LichessStrategy = require('passport-lichess').Strategy
 
+let STATE = classes.State()
+
 client.connect(err => {
 	if(err){
 		console.error("MongoDb connection failed", err)
 	}else{
 		console.log("MongoDb connected!")		
+		client.db("app").collection("transactions").find({}).toArray().then(result => {
+			console.log("retrieved all transactions", result.length)
+			for(let transactionBlob of result){
+				STATE.executeTransaction(classes.transactionFromBlob(transactionBlob))
+			}
+		}, err => console.error("getting all transactions failed", err))
 	}
 })
 
@@ -132,7 +142,7 @@ app.post('/api', (req, res) => {
 	
 	let topic = body.topic
 	
-	if(IS_PROD()) if( (!req.user) && (!["getAll"].includes(topic)) ){
+	if(IS_PROD() && (!req.user)){
 		let msg = "Warning: You should be logged in to be able to use the API."
 		
 		console.warn(msg)
@@ -148,19 +158,19 @@ app.post('/api', (req, res) => {
 	
 	console.info("api", topic, payload)
 	
-	if(topic == "listDatabases"){
+	/*if(topic == "listDatabases"){
 		client.db("admin").admin().listDatabases().then(result => {
 			apiSend(res, result)
 		})
-	}
+	}*/
 	
-	if(topic == "listCollections"){
+	/*if(topic == "listCollections"){
 		client.db(payload.dbName).listCollections().toArray().then(result => {
 			apiSend(res, result)
 		}, err => console.error("listing collections failed", err))
-	}
+	}*/
 	
-	if(topic == "dropCollection"){
+	/*if(topic == "dropCollection"){
 		if((payload.dbName == mongoStoreOptions.dbName)&&(payload.collName == mongoStoreOptions.collection)){
 			apiSend(res, {err: "Warning: You are not allowed to drop this collection for security reasons.", result: {}})
 			
@@ -171,9 +181,9 @@ app.post('/api', (req, res) => {
 			if(err) console.error("dropping collections failed", err)
 			apiSend(res, {err: err, result: result})
 		})
-	}
+	}*/
 	
-	if(topic == "dropDatabase"){
+	/*if(topic == "dropDatabase"){
 		if(payload.dbName == mongoStoreOptions.dbName){
 			apiSend(res, {err: "Warning: You are not allowed to drop this database for security reasons.", result: {}})
 			
@@ -184,9 +194,9 @@ app.post('/api', (req, res) => {
 			if(err) console.error("dropping database failed", err)
 			apiSend(res, {err: err, result: result})
 		})
-	}
+	}*/
 	
-	if(topic == "getSample"){
+	/*if(topic == "getSample"){
 		if(payload.dbName == mongoStoreOptions.dbName){
 			apiSend(res, {
 				"warning": "you are not allowed to get samples from this database for security reason"
@@ -197,29 +207,30 @@ app.post('/api', (req, res) => {
 		client.db(payload.dbName).collection(payload.collName).aggregate([{$sample: {size: payload.size || 1}}]).toArray().then(result => {
 			apiSend(res, result)
 		}, err => console.error("sampling collection failed", err))
-	}
+	}*/
 	
-	if(topic == "getAll"){
-		client.db("app").collection("transactions").find({}).toArray().then(result => {
-			apiSend(res, result)
-		}, err => console.error("getting all documents failed", err))
-	}
-	
-	if(topic == "updateOne"){
+	/*if(topic == "updateOne"){
 		client.db(payload.dbName).collection(payload.collName).updateOne(payload.filter, {$set: payload.doc}, payload.options).then(result => {
 			apiSend(res, result)
 		})
-	}
+	}*/
 	
 	if(topic == "addTransaction"){
-		let tr = payload.transaction
-		client.db("app").collection("transactions").insertOne(tr).then(result => {
+		let ok = true
+		
+		let transaction = classes.transactionFromBlob(payload.transaction)
+		
+		client.db("app").collection("transactions").insertOne(transaction.serialize()).then(result => {
 			apiSend(res, result)
 			
-			sse.ssesend({
-				topic: "addTransaction",
-				transaction: payload.transaction
-			})
+			if(ok){
+				STATE.executeTransaction(transaction)
+				
+				sse.ssesend({
+					topic: "setState",
+					state: STATE.serialize()
+				})	
+			}
 		})
 	}
 })
@@ -243,8 +254,10 @@ app.get('/', (req, res) => {
     <div id="root"></div>
 	<script>
 		var USER = ${JSON.stringify(req.user || {}, null, 2)}
+		var STATE = ${JSON.stringify(STATE.serialize(), null, 2)}
 		var TICK_INTERVAL = ${sse.TICK_INTERVAL}
 	</script>
+	<script src="classes.js"></script>
 	<script src="app.js"></script>
   </body>
 </html>
