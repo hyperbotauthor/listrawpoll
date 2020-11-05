@@ -95,14 +95,13 @@ function addLichessStrategy(app, props){
 }
 
 addLichessStrategy(app, {
-    tag: "lichess-bot",
-    clientID: process.env.LICHESS_BOT_CLIENT_ID || "some client id",
-    clientSecret: process.env.LICHESS_BOT_CLIENT_SECRET || "some client secret",
-    authURL: "/auth/lichess/bot",
-    //scope: "challenge:read challenge:write bot:play",
+    tag: "lichess",
+    clientID: process.env.LICHESS_CLIENT_ID || "some client id",
+    clientSecret: process.env.LICHESS_CLIENT_SECRET || "some client secret",
+    authURL: "/auth/lichess",
 	scope: "",
-    failureRedirect: "/?lichessbotlogin=failed",
-    okRedirect: "/?lichessbotlogin=ok"
+    failureRedirect: "/?lichesslogin=failed",
+    okRedirect: "/?lichesslogin=ok"
 })
 
 app.use("/", express.static(__dirname))
@@ -198,7 +197,7 @@ app.get('/', (req, res) => {
 
 	<div style="padding: 3px; background-color: #eee; margin-bottom: 6px;">
 
-	${req.user ? "logged in as <b>" + req.user.username + "</b> <a href='/logout'>log out</a>" : "<a href='/auth/lichess/bot'>log in with lichess bot</a>"}
+	${req.user ? "logged in as <b>" + req.user.username + "</b> <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a>"}
 	</div>
 
     <div id="root"></div>
