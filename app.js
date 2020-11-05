@@ -170,8 +170,52 @@ function listDatabases(){
 	})
 }
 
-let app = div().bc("#0f0").pad(10).a(	
-	button(listDatabases).marb(10).html("List databases"),
+let dbNameInput, collNameInput, filterInput, docInput
+
+function parseDoc(doc){
+	return new Promise(resolve => {
+		let blob
+		
+		try{
+			blob = JSON.parse(docInput.getText())	
+			
+			if(typeof blob != "object"){
+				window.alert("Document should be an object.")
+				return
+			}
+			if(Array.isArray(blob)){
+				window.alert("Document should not be an array.")
+				return
+			}
+		}catch(err){
+			window.alert("Document did not parse as JSON.")
+			return
+		}		
+		
+		resolve(blob)
+	})	
+}
+
+function updateDocument(){
+	let dbName = dbNameInput.getText()
+	let collName = collNameInput.getText()
+	
+	parseDoc(filterInput.getText()).then(filter => parseDoc(docInput.getText()).then(doc => {
+		api("updateOne", {dbName: dbName, collName: collName, filter: filter, doc: doc, options: {upsert: true}}).then(result => {
+			window.alert(JSON.stringify(result))
+		})	
+	}))
+}
+
+let app = div().w(880).bc("#0f0").pad(10).a(	
+	div().fl().marb(10).a(
+		button(listDatabases).html("List databases"),
+		Labeled("Db name", dbNameInput = TextInput({id: "dbNameInput"})).marl(10),
+		Labeled("Coll name", collNameInput = TextInput({id: "collNameInput"})).marl(10),
+		button(updateDocument).bc("#afa").marl(10).html("Update document")
+	),
+	Labeled("&nbsp;Filter&nbsp;", filterInput = textarea().w(800).h(50).mart(10).marb(10).setText("{\n\n}")).ffms(),
+	Labeled("&nbsp;&nbsp;Doc&nbsp;&nbsp;&nbsp;", docInput = textarea().w(800).h(200).marb(10).setText("{\n\n}")).ffms(),
 	listDatabasesDiv
 )
 

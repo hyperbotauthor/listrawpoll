@@ -158,6 +158,12 @@ app.post('/api', (req, res) => {
 			apiSend(res, result)
 		}, err => console.log("sampling collection failed", err))
 	}
+	
+	if(topic == "updateOne"){
+		client.db(payload.dbName).collection(payload.collName).updateOne(payload.filter, {$set: payload.doc}, payload.options).then(result => {
+			apiSend(res, result)
+		})
+	}
 })
 
 app.get('/findone', (req, res) => {
@@ -173,7 +179,7 @@ app.get('/', (req, res) => {
   <head>
     <meta charset="utf-8">
     <title>MongoDb Test</title>    
-    <script src="https://unpkg.com/@easychessanimations/foo@1.0.40/lib/fooweb.js"></script>
+    <script src="https://unpkg.com/@easychessanimations/foo@1.0.43/lib/fooweb.js"></script>
   </head>
   <body>
 
