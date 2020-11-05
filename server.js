@@ -190,7 +190,7 @@ app.get('/', (req, res) => {
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>MongoDb Test</title>    
+    <title>Lichess Straw Poll</title>    
     <script src="https://unpkg.com/@easychessanimations/foo@1.0.43/lib/fooweb.js"></script>
   </head>
   <body>
