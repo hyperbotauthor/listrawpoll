@@ -139,6 +139,12 @@ app.post('/api', (req, res) => {
 	}
 	
 	if(topic == "dropCollection"){
+		if((payload.dbName == mongoStoreOptions.dbName)&&(payload.collName == mongoStoreOptions.collection)){
+			apiSend(res, {err: "Warning: You are not allowed to drop this collection for security reasons.", result: {}})
+			
+			return
+		}
+		
 		client.db(payload.dbName).dropCollection(payload.collName, (err,result) => {
 			if(err) console.log("dropping collections failed", err)
 			apiSend(res, {err: err, result: result})
@@ -146,6 +152,12 @@ app.post('/api', (req, res) => {
 	}
 	
 	if(topic == "dropDatabase"){
+		if(payload.dbName == mongoStoreOptions.dbName){
+			apiSend(res, {err: "Warning: You are not allowed to drop this database for security reasons.", result: {}})
+			
+			return
+		}
+		
 		client.db(payload.dbName).dropDatabase((err,result) => {
 			if(err) console.log("dropping database failed", err)
 			apiSend(res, {err: err, result: result})
