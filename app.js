@@ -69,6 +69,8 @@ class State_ extends SmartdomElement_{
 		
 		this.transactions = this.props.transactions || []
 		
+		this.execTrIds = {}
+		
 		this.polls = this.props.polls || []
 		
 		this.pad(2).mar(2).bc("#aaf").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
@@ -83,12 +85,16 @@ class State_ extends SmartdomElement_{
 			if(tr.topic == "createPoll"){
 				this.polls.push(Poll(tr.props))
 			}
+			
+			this.execTrIds[tr.id] = true
 		}		
 		
 		return this.build()
 	}
 	
 	addTransaction(tr){
+		if(this.execTrIds[tr.id]) return
+		
 		this.exec(tr)
 		
 		this.transactions.push(tr)
