@@ -284,6 +284,9 @@ app.get('/', (req, res) => {
 	</div>
 
     <div id="root"></div>
+	<hr>
+	<a href="https://lichess.org/@/hyperchessbotauthor" rel="noopener noreferrer" target="_blank">hyperchessbotauthor</a> | 
+	<a href="https://github.com/hyperbotauthor/listrawpoll" rel="noopener noreferrer" target="_blank">github.com/hyperbotauthor/listrawpoll</a>	
 	<script>
 		var USER = ${JSON.stringify(req.user || {}, null, 2)}
 		var STATE = ${JSON.stringify(STATE.serialize(), null, 2)}
