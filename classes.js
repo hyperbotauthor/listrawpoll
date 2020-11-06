@@ -221,7 +221,7 @@ class Poll_{
 		
 		this.poll = this.props.poll || DEFAULT_POLL
 		this.author = this.props.author ? User(this.props.author) : User()
-		this.createdAt = this.props.createdAtr || new Date().getTime()
+		this.createdAt = this.props.createdAt || new Date().getTime()
 		this.pollId = this.props.pollId || UID()		
 		this.options = (this.props.options || []).map(optionBlob => PollOption(optionBlob))
 		
