@@ -184,7 +184,7 @@ class SmartOption_ extends SmartdomElement_{
 		this.showVotesDiv.disp("block").a(Object.entries(voters)
 			.filter(entry => entry[1].numVotes).map(entry => div().fl().aic().a(
 			div().c("#007").pad(2).mar(2).bc("#fd8").html(`<i>${entry[0]}</i>`),
-			div().c("#070").fwb().pad(2).mar(2).bc("#ffa").addStyle("zIndex", 100)
+			div().c("#070").fwb().pad(2).mar(2).bc("#ffa")
 				.html(entry[1].numVotes).marl(10).w(30).tac()
 		)))
 		
@@ -196,7 +196,8 @@ class SmartOption_ extends SmartdomElement_{
 			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
 			div().por().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).html(`${this.option.getNumVotes()}`).curp()
 				.ae("click", this.showVotes.bind(this)).a(
-					this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f").mar(2).mart(6).marl(3)
+					this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
+						.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
 				),
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
