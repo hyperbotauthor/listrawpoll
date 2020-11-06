@@ -137,6 +137,33 @@ class AddOption_ extends Transaction_{
 }
 function AddOption(props){return new AddOption_(props)}
 
+class AddVote_ extends Transaction_{
+	constructor(props){
+		super(props)
+		
+		this.deserialize(props)
+	}
+	
+	deserialize(props){
+		this.props = props || {}
+		
+		super.deserialize(this.props)
+		
+		this.topic = "addVote"
+		
+		this.vote = Vote(this.props.vote)
+		
+		return this
+	}
+	
+	serialize(){
+		return {...super.serialize(), ...{			
+			vote: this.vote.serialize()
+		}}
+	}
+}
+function AddVote(props){return new AddVote_(props)}
+
 class DeleteOption_ extends Transaction_{
 	constructor(props){
 		super(props)
@@ -171,6 +198,7 @@ function transactionFromBlob(blob){
 		case "createPoll": return CreatePoll(blob)
 		case "deletePoll": return DeletePoll(blob)
 		case "addOption": return AddOption(blob)
+		case "addVote": return AddVote(blob)
 		case "deleteOption": return DeleteOption(blob)
 	}
 }
@@ -187,7 +215,7 @@ class Poll_{
 		this.author = this.props.author ? User(this.props.author) : User()
 		this.createdAt = this.props.createdAtr || new Date().getTime()
 		this.pollId = this.props.pollId || UID()		
-		this.options = (this.props.options || []).map(optionBlob => PollOption(optionBlob))		
+		this.options = (this.props.options || []).map(optionBlob => PollOption(optionBlob))
 		
 		return this
 	}
@@ -212,6 +240,18 @@ class Poll_{
 	
 	deleteOptionById(optionId){
 		this.options = this.options.filter(option => option.optionId != optionId)
+	}
+	
+	executeTransaction(transaction){
+		if(transaction instanceof AddVote_){
+			let vote = transaction.vote
+			
+			let option = this.getOptionById(vote.targetOptionId)
+			
+			if(option){
+				option.votes.push(vote)
+			}
+		}
 	}
 }
 function Poll(props){return new Poll_(props)}
@@ -265,6 +305,14 @@ class State_{
 			}
 		}
 		
+		if(transaction instanceof AddVote_){
+			let targetPoll = this.getPollById(transaction.vote.targetPollId)
+			
+			if(targetPoll){
+				targetPoll.executeTransaction(transaction)
+			}
+		}
+		
 		if(transaction instanceof DeleteOption_){
 			let targetPoll = this.getPollById(transaction.parentPollId)
 			
@@ -302,7 +350,8 @@ class Vote_{
 		this.author = User(this.props.author)
 		this.createdAt = this.props.createdAt || new Date().getTime()
 		this.targetPollId = this.props.targetPollId
-		this.targetOptionId = this.props.targetOptionId
+		this.targetOptionId = this.props.targetOptionId		
+		this.quantity = this.props.quantity || 1
 	}
 	
 	serialize(){
@@ -310,10 +359,12 @@ class Vote_{
 			author: this.author.serialize(),
 			createdAt: this.createdAt,
 			targetPollId: this.targetPollId,
-			targetOptionId: this.targetOptionId
+			targetOptionId: this.targetOptionId,
+			quantity: this.quantity
 		}
 	}
 }
+function Vote(props){return new Vote_(props)}
 
 class PollOption_{
 	constructor(props){
@@ -336,6 +387,16 @@ class PollOption_{
 			parentPollId: this.parentPollId,
 			votes: this.votes.map(vote => vote.serialize())
 		}
+	}
+
+	getNumVotes(){
+		let numVotes = 0
+		
+		this.votes.forEach(vote => numVotes += vote.quantity)
+		
+		console.log(this.votes)
+		
+		return numVotes
 	}
 }
 function PollOption(props){return new PollOption_(props)}

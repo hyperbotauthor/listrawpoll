@@ -136,8 +136,19 @@ class SmartOption_ extends SmartdomElement_{
 		this.fl().aic().jc("space-between").pad(2).mar(2).bc("#aff")
 	}	
 	
-	vote(){
-		
+	vote(quantity){
+		let transaction = AddVote({				
+			vote: Vote({
+				author: getUser(),			
+				targetPollId: this.option.parentPollId,
+				targetOptionId: this.option.optionId,
+				quantity: quantity
+			})
+		})
+
+		addTransaction(transaction).then(result => {
+			console.info(result)
+		})
 	}
 	
 	delete(){
@@ -154,9 +165,10 @@ class SmartOption_ extends SmartdomElement_{
 	build(){
 		this.x().a(
 			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
+			div().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).html(`${this.option.getNumVotes()}`),
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
-			button(_=>this.delete()).html("Delete").bc("#faa").marl(10)
+			button(_=>this.delete()).html("Delete").bc("#faa")
 		)
 	}
 }
@@ -208,7 +220,7 @@ class App_ extends SmartdomElement_{
 }
 function App(props){return new App_(props)}
 
-let app = App({state: STATE})
+let app = App({state: State(STATE)})
 
 document.getElementById("root").appendChild(app.e)
 
