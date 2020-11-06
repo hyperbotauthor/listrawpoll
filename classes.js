@@ -25,6 +25,10 @@ class User_{
 			username: this.username
 		}
 	}
+	
+	equalTo(user){
+		return this.id == user.id
+	}
 }
 function User(props){return new User_(props)}
 
@@ -249,7 +253,7 @@ class Poll_{
 			let option = this.getOptionById(vote.targetOptionId)
 			
 			if(option){
-				option.votes.push(vote)
+				option.addVote(vote)
 			}
 		}
 	}
@@ -388,15 +392,35 @@ class PollOption_{
 			votes: this.votes.map(vote => vote.serialize())
 		}
 	}
+	
+	getVotesByUser(user){
+		return this.votes.filter(vote => vote.author.equalTo(user))
+	}
+	
+	addVote(vote){
+		if(vote.quantity < 0){
+			let numVotes = this.getNumVotesFor(this.getVotesByUser(vote.author))
+			if(numVotes < 1){
+				console.info(`cannot unvote ${numVotes}`)
+				return
+			}
+		}
+		
+		this.votes.push(vote)
+	}
 
-	getNumVotes(){
+	getNumVotesFor(votes){
 		let numVotes = 0
 		
-		this.votes.forEach(vote => numVotes += vote.quantity)
+		votes.forEach(vote => numVotes += vote.quantity)
 		
 		console.log(this.votes)
 		
 		return numVotes
+	}
+	
+	getNumVotes(){
+		return this.getNumVotesFor(this.votes)
 	}
 }
 function PollOption(props){return new PollOption_(props)}
