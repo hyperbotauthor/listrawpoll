@@ -184,7 +184,7 @@ class SmartOption_ extends SmartdomElement_{
 		this.showVotesDiv.disp("block").a(Object.entries(voters)
 			.filter(entry => entry[1].numVotes).map(entry => div().fl().aic().a(
 			div().c("#007").pad(2).mar(2).bc("#fd8").html(`<i>${entry[0]}</i>`),
-			div().c("#070").fwb().pad(2).mar(2).bc("#ffa")
+			div().c("#070").fwb().pad(2).mar(2).bc("#ffa").addStyle("z-index", 100)
 				.html(entry[1].numVotes).marl(10).w(30).tac()
 		)))
 		
