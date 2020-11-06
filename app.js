@@ -103,7 +103,8 @@ class SmartPoll_ extends SmartdomElement_{
 			),
 			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small>${new Date(this.poll.createdAt).toLocaleString()}</small>`),
 			div().pad(2).marl(10).bc("#de9").a(
-				this.poll.options.map(option => SmartOption({option: option}))
+				this.poll.options.sort((a,b) => b.getNumVotes() - a.getNumVotes())
+					.map(option => SmartOption({option: option}))
 			)			
 		)
 		
@@ -125,7 +126,8 @@ class SmartState_ extends SmartdomElement_{
 	
 	build(){
 		this.x().a(
-			this.state.polls.map(poll => SmartPoll({poll: poll}))
+			this.state.polls.sort((a,b) => b.getNumVotes() - a.getNumVotes())
+				.map(poll => SmartPoll({poll: poll}))
 		)
 		
 		return this

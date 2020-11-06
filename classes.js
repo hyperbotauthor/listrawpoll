@@ -261,6 +261,14 @@ class Poll_{
 			}
 		}
 	}
+	
+	getNumVotes(){
+		let numVotes = 0
+		
+		this.options.forEach(options => numVotes += options.getNumVotes())
+		
+		return numVotes
+	}
 }
 function Poll(props){return new Poll_(props)}
 
