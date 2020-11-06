@@ -90,7 +90,7 @@ class SmartPoll_ extends SmartdomElement_{
 		this.x().a(
 			div().fl().aic().jc("space-between").a(
 				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll),
-				button(_ => this.addOption()).html("Add option").bc("#afa").marr(10),
+				button(_ => this.addOption()).html("Add option").bc("#afa").marr(10),				
 				button(_ => this.delete()).html("Delete").bc("#faa").marr(10)
 			),
 			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small>${new Date(this.poll.createdAt).toLocaleString()}</small>`),
@@ -140,10 +140,23 @@ class SmartOption_ extends SmartdomElement_{
 		
 	}
 	
+	delete(){
+		let transaction = DeleteOption({				
+			parentPollId: this.option.parentPollId,
+			optionId: this.option.optionId
+		})
+
+		addTransaction(transaction).then(result => {
+			console.info(result)
+		})
+	}
+	
 	build(){
 		this.x().a(
-			div().pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
-			button(_=>this.vote()).html("Vote")
+			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
+			button(_=>this.vote(1)).html("Vote").bc("#afa"),
+			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
+			button(_=>this.delete()).html("Delete").bc("#faa").marl(10)
 		)
 	}
 }

@@ -137,11 +137,41 @@ class AddOption_ extends Transaction_{
 }
 function AddOption(props){return new AddOption_(props)}
 
+class DeleteOption_ extends Transaction_{
+	constructor(props){
+		super(props)
+		
+		this.deserialize(props)
+	}
+	
+	deserialize(props){
+		this.props = props || {}
+		
+		super.deserialize(this.props)
+		
+		this.topic = "deleteOption"
+		
+		this.parentPollId = this.props.parentPollId
+		this.optionId = this.props.optionId
+		
+		return this
+	}
+	
+	serialize(){
+		return {...super.serialize(), ...{			
+			parentPollId: this.parentPollId,
+			optionId: this.optionId
+		}}
+	}
+}
+function DeleteOption(props){return new DeleteOption_(props)}
+
 function transactionFromBlob(blob){
 	switch(blob.topic){
 		case "createPoll": return CreatePoll(blob)
 		case "deletePoll": return DeletePoll(blob)
 		case "addOption": return AddOption(blob)
+		case "deleteOption": return DeleteOption(blob)
 	}
 }
 
@@ -174,6 +204,14 @@ class Poll_{
 	
 	addOption(option){
 		this.options.push(option)
+	}
+	
+	getOptionById(optionId){
+		return this.options.find(option => option.optionId == optionId)
+	}
+	
+	deleteOptionById(optionId){
+		this.options = this.options.filter(option => option.optionId != optionId)
 	}
 }
 function Poll(props){return new Poll_(props)}
@@ -224,6 +262,14 @@ class State_{
 			
 			if(targetPoll){
 				targetPoll.addOption(transaction.option)
+			}
+		}
+		
+		if(transaction instanceof DeleteOption_){
+			let targetPoll = this.getPollById(transaction.parentPollId)
+			
+			if(targetPoll){
+				targetPoll.deleteOptionById(transaction.optionId)
 			}
 		}
 	}
@@ -277,14 +323,16 @@ class PollOption_{
 	deserialize(props){
 		this.props = props || {}
 		
+		this.optionId = this.props.optionId || UID()
 		this.option = this.props.option || DEFAULT_OPTION
 		this.parentPollId = this.props.parentPollId
 		this.votes = (this.props.votes || []).map(voteBlob => Vote(voteBlob))
 	}
 	
 	serialize(){
-		return {
+		return {			
 			option: this.option,
+			optionId: this.optionId,
 			parentPollId: this.parentPollId,
 			votes: this.votes.map(vote => vote.serialize())
 		}
