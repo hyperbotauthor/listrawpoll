@@ -39,9 +39,17 @@ function api(topic, payload){
 }
 
 function addTransaction(transaction){
-	return this.api("addTransaction", {
-		transaction: transaction.serialize()
-	})
+	return new Promise(resolve => {
+		return this.api("addTransaction", {
+			transaction: transaction.serialize()
+		}).then(result => {
+			if(result.quotaExceeded){
+				window.alert("Transaction quouta exceeded. Wait a little.")				
+			}else{
+				resolve(result)
+			}
+		})
+	})	
 }
 
 class SmartPoll_ extends SmartdomElement_{

@@ -137,6 +137,80 @@ app.get('/logout', (req, res) => {
 	res.redirect("/")
 })
 
+const SECOND = 1000
+const MINUTE = 60 * SECOND
+const HOUR = 60 * MINUTE
+
+class Transactions{
+	constructor(props){				
+		this.props = props
+		
+		this.quotas = this.props.quotas
+		
+		this.transactions = []
+	}
+	
+	add(transaction){
+		this.transactions.unshift(transaction)
+	}
+	
+	isExhausted(user){		
+		for(let quota of this.quotas) quota.init()
+		
+		for(let transaction of this.transactions){
+			for(let quota of this.quotas){
+				if(quota.isExhausted(user, transaction)){
+					return true
+				}
+			}
+		}
+		
+		return false
+	}
+}
+
+class TransactionQuota{
+	constructor(props){
+		this.props = props
+		
+		this.span = this.props.span
+		this.cap = this.props.cap
+	}
+	
+	init(){
+		this.count = 0
+		this.now = new Date().getTime()
+	}
+	
+	isExhausted(user, transaction){
+		console.log(user, transaction.verifiedUser)
+		if(!transaction.verifiedUser.equalTo(user)) return false
+		
+		let elapsed = this.now - transaction.createdAt
+		
+		if(elapsed < this.span){
+			this.count ++
+			
+			if(this.count > this.cap){
+				return true
+			}
+		}
+	}
+}
+
+const TRANSACTIONS = new Transactions({
+	quotas: [
+		new TransactionQuota({
+			span: 10 * MINUTE,
+			cap: 20
+		}),
+		new TransactionQuota({
+			span: 30 * SECOND,
+			cap: 5
+		})
+	]
+})
+
 app.post('/api', (req, res) => {
 	let body = req.body
 	
@@ -163,7 +237,19 @@ app.post('/api', (req, res) => {
 		
 		let transaction = classes.transactionFromBlob(payload.transaction)
 		
+		transaction.createdAt = new Date().getTime()
+		
 		transaction.verifiedUser = classes.User(req.user)
+		
+		if(TRANSACTIONS.isExhausted(transaction.verifiedUser)){
+			apiSend(res, {
+				quotaExceeded: true
+			})
+			
+			return
+		}
+		
+		TRANSACTIONS.add(transaction)
 		
 		client.db("app").collection("transactions").insertOne(transaction.serialize()).then(result => {
 			apiSend(res, result)
