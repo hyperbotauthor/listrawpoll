@@ -157,68 +157,13 @@ app.post('/api', (req, res) => {
 	let payload = body.payload
 	
 	console.info("api", topic, payload)
-	
-	/*if(topic == "listDatabases"){
-		client.db("admin").admin().listDatabases().then(result => {
-			apiSend(res, result)
-		})
-	}*/
-	
-	/*if(topic == "listCollections"){
-		client.db(payload.dbName).listCollections().toArray().then(result => {
-			apiSend(res, result)
-		}, err => console.error("listing collections failed", err))
-	}*/
-	
-	/*if(topic == "dropCollection"){
-		if((payload.dbName == mongoStoreOptions.dbName)&&(payload.collName == mongoStoreOptions.collection)){
-			apiSend(res, {err: "Warning: You are not allowed to drop this collection for security reasons.", result: {}})
-			
-			return
-		}
 		
-		client.db(payload.dbName).dropCollection(payload.collName, (err,result) => {
-			if(err) console.error("dropping collections failed", err)
-			apiSend(res, {err: err, result: result})
-		})
-	}*/
-	
-	/*if(topic == "dropDatabase"){
-		if(payload.dbName == mongoStoreOptions.dbName){
-			apiSend(res, {err: "Warning: You are not allowed to drop this database for security reasons.", result: {}})
-			
-			return
-		}
-		
-		client.db(payload.dbName).dropDatabase((err,result) => {
-			if(err) console.error("dropping database failed", err)
-			apiSend(res, {err: err, result: result})
-		})
-	}*/
-	
-	/*if(topic == "getSample"){
-		if(payload.dbName == mongoStoreOptions.dbName){
-			apiSend(res, {
-				"warning": "you are not allowed to get samples from this database for security reason"
-			})
-			
-			return
-		}
-		client.db(payload.dbName).collection(payload.collName).aggregate([{$sample: {size: payload.size || 1}}]).toArray().then(result => {
-			apiSend(res, result)
-		}, err => console.error("sampling collection failed", err))
-	}*/
-	
-	/*if(topic == "updateOne"){
-		client.db(payload.dbName).collection(payload.collName).updateOne(payload.filter, {$set: payload.doc}, payload.options).then(result => {
-			apiSend(res, result)
-		})
-	}*/
-	
 	if(topic == "addTransaction"){
 		let ok = true
 		
 		let transaction = classes.transactionFromBlob(payload.transaction)
+		
+		transaction.verifiedUser = classes.User(req.user)
 		
 		client.db("app").collection("transactions").insertOne(transaction.serialize()).then(result => {
 			apiSend(res, result)

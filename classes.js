@@ -45,6 +45,8 @@ class Transaction_{
 		this.transactionId = this.props.transactionId || UID()
 		this.createdAt = this.props.createdAt || new Date().getTime()
 		
+		this.verifiedUser = this.props.verifiedUser ? User(this.props.verifiedUser) : User()
+		
 		return this
 	}
 	
@@ -53,7 +55,9 @@ class Transaction_{
 			author: this.author.serialize(),
 			topic: this.topic,
 			transactionId: this.transactionId,
-			createdAt: this.createdAt
+			createdAt: this.createdAt,
+			
+			verifiedUser: this.verifiedUser.serialize()
 		}
 	}
 }
@@ -298,13 +302,25 @@ class State_{
 		}
 		
 		if(transaction instanceof DeletePoll_){
-			this.polls = this.polls.filter(poll => poll.pollId != transaction.pollId)
+			let poll = this.getPollById(transaction.pollId)
+			
+			if(poll){
+				if(!poll.author.equalTo(transaction.verifiedUser)){
+					return
+				}
+				
+				this.polls = this.polls.filter(poll => poll.pollId != transaction.pollId)	
+			}			
 		}
 		
 		if(transaction instanceof AddOption_){
 			let targetPoll = this.getPollById(transaction.option.parentPollId)
 			
 			if(targetPoll){
+				if(!targetPoll.author.equalTo(transaction.verifiedUser)){
+					return
+				}
+				
 				targetPoll.addOption(transaction.option)
 			}
 		}
@@ -321,6 +337,10 @@ class State_{
 			let targetPoll = this.getPollById(transaction.parentPollId)
 			
 			if(targetPoll){
+				if(!targetPoll.author.equalTo(transaction.verifiedUser)){
+					return
+				}
+				
 				targetPoll.deleteOptionById(transaction.optionId)
 			}
 		}
