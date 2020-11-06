@@ -162,10 +162,42 @@ class SmartOption_ extends SmartdomElement_{
 		})
 	}
 	
+	showVotes(){
+		this.showVotesDiv.x().disp("none")
+		
+		if(this.showVotesOpen){			
+			this.showVotesOpen = false
+			return
+		}
+		
+		let voters = {}
+		
+		for(let vote of this.option.votes){
+			let voter = vote.author.username
+			
+			if(!voters[voter]) voters[voter] = {numVotes: 0}
+			
+			let newNumVotes = voters[voter].numVotes + vote.quantity
+			if(newNumVotes >= 0) voters[voter].numVotes = newNumVotes
+		}
+		
+		this.showVotesDiv.disp("block").a(Object.entries(voters)
+			.filter(entry => entry[1].numVotes).map(entry => div().fl().aic().a(
+			div().c("#007").pad(2).mar(2).bc("#fd8").html(`<i>${entry[0]}</i>`),
+			div().c("#070").fwb().pad(2).mar(2).bc("#ffa")
+				.html(entry[1].numVotes).marl(10).w(30).tac()
+		)))
+		
+		this.showVotesOpen = true
+	}
+	
 	build(){
 		this.x().a(
 			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
-			div().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).html(`${this.option.getNumVotes()}`),
+			div().por().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).html(`${this.option.getNumVotes()}`).curp()
+				.ae("click", this.showVotes.bind(this)).a(
+					this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f").mar(2).mart(6).marl(3)
+				),
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
 			button(_=>this.delete()).html("Delete").bc("#faa")
@@ -185,6 +217,8 @@ class App_ extends SmartdomElement_{
 	
 	setState(state){
 		this.state = state
+		
+		this.e.classList.add("unselectable")
 		
 		this.build()
 	}

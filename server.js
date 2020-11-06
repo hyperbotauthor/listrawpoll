@@ -244,6 +244,7 @@ app.get('/', (req, res) => {
     <title>Lichess Straw Poll</title>    
     <script src="https://unpkg.com/@easychessanimations/foo@1.0.43/lib/fooweb.js"></script>
 	<script src="https://unpkg.com/@easychessanimations/sse/lib/sseclient.js"></script>
+	<link rel="stylesheet" href="style.css">
   </head>
   <body>
 

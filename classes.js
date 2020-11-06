@@ -400,8 +400,7 @@ class PollOption_{
 	addVote(vote){
 		if(vote.quantity < 0){
 			let numVotes = this.getNumVotesFor(this.getVotesByUser(vote.author))
-			if(numVotes < 1){
-				console.info(`cannot unvote ${numVotes}`)
+			if(numVotes < 1){				
 				return
 			}
 		}
@@ -413,8 +412,6 @@ class PollOption_{
 		let numVotes = 0
 		
 		votes.forEach(vote => numVotes += vote.quantity)
-		
-		console.log(this.votes)
 		
 		return numVotes
 	}
