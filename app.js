@@ -66,13 +66,37 @@ class SmartPoll_ extends SmartdomElement_{
 		})
 	}
 	
+	addOption(){
+		let optionText = window.prompt("Option :")
+		
+		if(optionText){
+			let option = PollOption({
+				author: getUser(),
+				option: optionText,
+				parentPollId: this.poll.pollId
+			})
+			
+			let transaction = AddOption({				
+				option: option
+			})
+			
+			addTransaction(transaction).then(result => {
+				console.info(result)
+			})
+		}
+	}
+	
 	build(){
 		this.x().a(
 			div().fl().aic().jc("space-between").a(
 				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll),
+				button(_ => this.addOption()).html("Add option").bc("#afa").marr(10),
 				button(_ => this.delete()).html("Delete").bc("#faa").marr(10)
 			),
-			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small>${new Date(this.poll.createdAt).toLocaleString()}</small>`)
+			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small>${new Date(this.poll.createdAt).toLocaleString()}</small>`),
+			div().pad(2).marl(10).bc("#de9").a(
+				this.poll.options.map(option => SmartOption({option: option}))
+			)			
 		)
 		
 		return this
@@ -100,6 +124,30 @@ class SmartState_ extends SmartdomElement_{
 	}
 }
 function SmartState(props){return new SmartState_(props)}
+
+class SmartOption_ extends SmartdomElement_{
+	constructor(props){
+		super({...props, ...{tagName: "div"}})
+		
+		this.option = this.props.option || PollOption()
+		
+		this.build()
+		
+		this.fl().aic().jc("space-between").pad(2).mar(2).bc("#aff")
+	}	
+	
+	vote(){
+		
+	}
+	
+	build(){
+		this.x().a(
+			div().pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
+			button(_=>this.vote()).html("Vote")
+		)
+	}
+}
+function SmartOption(props){return new SmartOption_(props)}
 
 class App_ extends SmartdomElement_{
 	constructor(props){
