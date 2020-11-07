@@ -61,6 +61,7 @@ class Transaction_{
 		}
 	}
 }
+function Transaction(props){return new Transaction_(props)}
 
 class CreatePoll_ extends Transaction_{
 	constructor(props){
