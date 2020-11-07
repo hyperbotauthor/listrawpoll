@@ -185,6 +185,15 @@ function addLichessStrategy(app, props){
             console.log(`id : ${profile.id}\naccessToken : ${accessToken}\nrefreshToken : ${refreshToken}`)
 		
             profile.accessToken = accessToken
+		
+			let connectTransaction = classes.Transaction()
+			
+			connectTransaction.author = classes.User(profile)
+			connectTransaction.verifiedUser = classes.User(profile)
+		
+			client.db("app").collection("transactions").insertOne(connectTransaction.serialize()).then(result => {
+				console.log("insert login transaction result", result)	
+			})
 				
             return cb(null, profile)
         }
