@@ -448,6 +448,7 @@ if(typeof module != "undefined"){
 		DeletePoll: DeletePoll,
 		transactionFromBlob: transactionFromBlob,
 		Poll: Poll,
-		State: State
+		State: State,
+		Transaction: Transaction
 	}
 }
