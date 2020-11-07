@@ -235,6 +235,17 @@ app.post('/api', (req, res) => {
 	
 	let topic = body.topic
 	
+	let payload = body.payload
+	
+	if(topic == "getLatest"){
+		client.db("app").collection("transactions").find().sort({"$natural": -1}).limit(payload.limit || 100).toArray().then(result => {
+			console.log("retrieved latest transactions", result.length)
+			apiSend(res, result)
+		}, err => console.error("getting all transactions failed", err))
+		
+		return
+	}
+	
 	if(IS_PROD() && (!req.user)){
 		let msg = "Warning: You should be logged in to be able to use the API."
 		
@@ -246,8 +257,6 @@ app.post('/api', (req, res) => {
 		
 		return
 	}
-	
-	let payload = body.payload
 	
 	console.info("api", topic, payload)
 		
@@ -301,7 +310,9 @@ app.get('/', (req, res) => {
   <body>
 
 	<div style="padding: 3px; background-color: #eee; margin-bottom: 6px;">
-		${req.user ? "logged in as <b>" + req.user.username + "</b> <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a>"}
+		${req.user ? "logged in as <b>" + req.user.username + "</b> <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a>"} 
+	| <a href="/?latest=true">view latest transactions</a> 
+	| <a href="/">home</a>
 	</div>
 
     <div id="root"></div>

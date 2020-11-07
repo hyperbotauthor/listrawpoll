@@ -285,9 +285,54 @@ class App_ extends SmartdomElement_{
 }
 function App(props){return new App_(props)}
 
-let app = App({state: State(STATE)})
+let app
 
-document.getElementById("root").appendChild(app.e)
+function isDocVerified(doc){
+	if(!doc.verifiedUser) return false
+	
+	if(doc.verifiedUser.id == "@nonymous") return false
+	
+	return true
+}
+
+function docInfo(doc){
+	if(doc.topic == "addVote"){
+		return doc.vote.targetPollId + " / " + doc.vote.targetOptionId
+	}
+	
+	if(doc.topic == "addOption"){
+		return doc.option.parentPollId
+	}
+	
+	if(doc.topic == "deleteOption"){
+		return doc.parentPollId
+	}
+	
+	if(doc.topic == "createPoll"){
+		return doc.pollId
+	}
+	
+	if(doc.topic == "deletePoll"){
+		return doc.pollId
+	}
+}
+
+if(document.location.href.match(/latest=true/)){
+	api("getLatest", {limit: 200}).then(result => {
+		app = div().a(result.filter(doc => isDocVerified(doc)).map(doc => div().fl().aic().pad(2).mar(2).bc("#eee").a(
+			div().w(150).pad(2).mar(2).bc("#ffe").html(doc.topic),
+			div().w(150).pad(2).mar(2).bc("#eff").html(doc.verifiedUser.username),
+			div().w(200).pad(2).mar(2).bc("#fef").html(new Date(doc.createdAt).toLocaleString()).ffms(),
+			div().pad(2).mar(2).bc("#eee").html(docInfo(doc)),
+		)))
+		
+		document.getElementById("root").appendChild(app.e)
+	})
+}else{
+	app = App({state: State(STATE)})
+	
+	document.getElementById("root").appendChild(app.e)
+}
 
 setupSource(blob => {	
 	if(blob.kind != "tick") console.info(blob)
