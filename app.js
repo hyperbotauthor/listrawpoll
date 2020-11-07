@@ -1,12 +1,12 @@
 function IS_DEV(){
-	return document.location.host.match(/localhost/)
+	return document.location.host.match(/localhost|goorm.io/)
 }
 
 function getUser(){
-	return IS_DEV() ? {
+	return IS_DEV() ? User({
 		id: "@nonymous",
 		username: "@nonymous"
-	} : USER
+	}) : User(USER)
 }
 
 function api(topic, payload){
@@ -63,7 +63,13 @@ class SmartPoll_ extends SmartdomElement_{
 		this.build()
 	}
 	
-	delete(){
+	delete(){		
+		if(!this.poll.author.equalTo(getUser())){
+			window.alert("You can only delete your own poll.")
+			
+			return
+		}
+		
 		let transaction = DeletePoll({
 			author: this.poll.author,
 			pollId: this.poll.pollId
@@ -75,6 +81,12 @@ class SmartPoll_ extends SmartdomElement_{
 	}
 	
 	addOption(){
+		if(!this.poll.author.equalTo(getUser())){
+			window.alert("You can only add an option your own poll.")
+			
+			return
+		}
+		
 		let optionText = window.prompt("Option :")
 		
 		if(optionText){
@@ -104,7 +116,7 @@ class SmartPoll_ extends SmartdomElement_{
 			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
 			this.optionsDiv = div().pad(2).marl(10).bc("#de9").a(
 				this.poll.options.sort((a,b) => b.getNumVotes() - a.getNumVotes())
-					.map(option => SmartOption({option: option}))
+					.map(option => SmartOption({option: option, parentPoll: this}))
 			)			
 		)
 		
@@ -143,6 +155,8 @@ class SmartOption_ extends SmartdomElement_{
 		
 		this.option = this.props.option || PollOption()
 		
+		this.parentPoll = this.props.parentPoll
+		
 		this.build()
 		
 		this.fl().aic().jc("space-between").pad(2).mar(2).bc("#aff")
@@ -164,6 +178,12 @@ class SmartOption_ extends SmartdomElement_{
 	}
 	
 	delete(){
+		if(!this.parentPoll.poll.author.equalTo(getUser())){
+			window.alert("You can only delete an option from your own poll.")
+			
+			return
+		}
+		
 		let transaction = DeleteOption({				
 			parentPollId: this.option.parentPollId,
 			optionId: this.option.optionId
