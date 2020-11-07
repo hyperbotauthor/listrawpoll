@@ -1,8 +1,100 @@
+const classes = require("./classes.js")
+
+const SECOND = 1000
+const MINUTE = 60 * SECOND
+const HOUR = 60 * MINUTE
+
+class Transactions{
+	constructor(props){				
+		this.props = props
+		
+		this.bannedUsers = props.bannedUsers || []
+		this.bannedPolls = props.bannedPolls || []
+		
+		this.quotas = this.props.quotas
+		
+		this.transactions = []
+	}
+	
+	isOk(transaction){
+		if(transaction.verifiedUser){
+			if(this.bannedUsers.includes(transaction.verifiedUser.id)) return false
+			if(this.bannedUsers.includes(transaction.verifiedUser.username)) return false
+		}
+		
+		if(transaction instanceof classes.CreatePoll_){
+			if(this.bannedPolls.includes(transaction.pollId)) return false
+		}
+		
+		return true
+	}
+	
+	add(transaction){
+		this.transactions.unshift(transaction)
+	}
+	
+	isExhausted(user){		
+		for(let quota of this.quotas) quota.init()
+		
+		for(let transaction of this.transactions){
+			for(let quota of this.quotas){
+				if(quota.isExhausted(user, transaction)){
+					return true
+				}
+			}
+		}
+		
+		return false
+	}
+}
+
+class TransactionQuota{
+	constructor(props){
+		this.props = props
+		
+		this.span = this.props.span
+		this.cap = this.props.cap
+	}
+	
+	init(){
+		this.count = 0
+		this.now = new Date().getTime()
+	}
+	
+	isExhausted(user, transaction){
+		console.log(user, transaction.verifiedUser)
+		if(!transaction.verifiedUser.equalTo(user)) return false
+		
+		let elapsed = this.now - transaction.createdAt
+		
+		if(elapsed < this.span){
+			this.count ++
+			
+			if(this.count > this.cap){
+				return true
+			}
+		}
+	}
+}
+
+const TRANSACTIONS = new Transactions({
+	bannedUsers: process.env.BANNED_USERS ? process.env.BANNED_USERS.split(" ") : [],
+	bannedPolls: process.env.BANNED_POLLS ? process.env.BANNED_POLLS.split(" ") : [],
+	quotas: [
+		new TransactionQuota({
+			span: 10 * MINUTE,
+			cap: 20
+		}),
+		new TransactionQuota({
+			span: 30 * SECOND,
+			cap: 5
+		})
+	]
+})
+
 function IS_PROD(){
 	return !!process.env.SITE_HOST
 }
-
-const classes = require("./classes.js")
 
 const sse = require('@easychessanimations/sse')
 
@@ -27,7 +119,8 @@ client.connect(err => {
 		client.db("app").collection("transactions").find({}).toArray().then(result => {
 			console.log("retrieved all transactions", result.length)
 			for(let transactionBlob of result){
-				STATE.executeTransaction(classes.transactionFromBlob(transactionBlob))
+				let transaction = classes.transactionFromBlob(transactionBlob)
+				if(TRANSACTIONS.isOk(transaction)) STATE.executeTransaction(transaction)
 			}
 		}, err => console.error("getting all transactions failed", err))
 	}
@@ -137,80 +230,6 @@ app.get('/logout', (req, res) => {
 	res.redirect("/")
 })
 
-const SECOND = 1000
-const MINUTE = 60 * SECOND
-const HOUR = 60 * MINUTE
-
-class Transactions{
-	constructor(props){				
-		this.props = props
-		
-		this.quotas = this.props.quotas
-		
-		this.transactions = []
-	}
-	
-	add(transaction){
-		this.transactions.unshift(transaction)
-	}
-	
-	isExhausted(user){		
-		for(let quota of this.quotas) quota.init()
-		
-		for(let transaction of this.transactions){
-			for(let quota of this.quotas){
-				if(quota.isExhausted(user, transaction)){
-					return true
-				}
-			}
-		}
-		
-		return false
-	}
-}
-
-class TransactionQuota{
-	constructor(props){
-		this.props = props
-		
-		this.span = this.props.span
-		this.cap = this.props.cap
-	}
-	
-	init(){
-		this.count = 0
-		this.now = new Date().getTime()
-	}
-	
-	isExhausted(user, transaction){
-		console.log(user, transaction.verifiedUser)
-		if(!transaction.verifiedUser.equalTo(user)) return false
-		
-		let elapsed = this.now - transaction.createdAt
-		
-		if(elapsed < this.span){
-			this.count ++
-			
-			if(this.count > this.cap){
-				return true
-			}
-		}
-	}
-}
-
-const TRANSACTIONS = new Transactions({
-	quotas: [
-		new TransactionQuota({
-			span: 10 * MINUTE,
-			cap: 20
-		}),
-		new TransactionQuota({
-			span: 30 * SECOND,
-			cap: 5
-		})
-	]
-})
-
 app.post('/api', (req, res) => {
 	let body = req.body
 	
@@ -248,6 +267,8 @@ app.post('/api', (req, res) => {
 			
 			return
 		}
+		
+		if(!TRANSACTIONS.isOk(transaction)) return
 		
 		TRANSACTIONS.add(transaction)
 		

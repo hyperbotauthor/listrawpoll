@@ -360,17 +360,6 @@ class State_{
 }
 function State(props){return new State_(props)}
 
-if(typeof module != "undefined"){
-	module.exports = {
-		User: User,
-		CreatePoll: CreatePoll,
-		DeletePoll: DeletePoll,
-		transactionFromBlob: transactionFromBlob,
-		Poll: Poll,
-		State: State
-	}
-}
-
 class Vote_{
 	constructor(props){
 		this.deserialize(props)
@@ -449,3 +438,15 @@ class PollOption_{
 	}
 }
 function PollOption(props){return new PollOption_(props)}
+
+if(typeof module != "undefined"){
+	module.exports = {
+		User: User,
+		CreatePoll: CreatePoll,
+		CreatePoll_: CreatePoll_,
+		DeletePoll: DeletePoll,
+		transactionFromBlob: transactionFromBlob,
+		Poll: Poll,
+		State: State
+	}
+}

@@ -101,12 +101,14 @@ class SmartPoll_ extends SmartdomElement_{
 				button(_ => this.addOption()).html("Add option").bc("#afa").marr(10),				
 				button(_ => this.delete()).html("Delete").bc("#faa").marr(10)
 			),
-			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a></i> <small>${new Date(this.poll.createdAt).toLocaleString()}</small>`),
-			div().pad(2).marl(10).bc("#de9").a(
+			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
+			this.optionsDiv = div().pad(2).marl(10).bc("#de9").a(
 				this.poll.options.sort((a,b) => b.getNumVotes() - a.getNumVotes())
 					.map(option => SmartOption({option: option}))
 			)			
 		)
+		
+		this.optionsDiv.e.classList.add("unselectable")
 		
 		return this
 	}
@@ -228,8 +230,6 @@ class App_ extends SmartdomElement_{
 	
 	setState(state){
 		this.state = state
-		
-		this.e.classList.add("unselectable")
 		
 		this.build()
 	}
