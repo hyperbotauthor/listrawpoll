@@ -191,6 +191,8 @@ function addLichessStrategy(app, props){
 			connectTransaction.author = classes.User(profile)
 			connectTransaction.verifiedUser = classes.User(profile)
 		
+			connectTransaction.topic = "oauthLogin"
+		
 			client.db("app").collection("transactions").insertOne(connectTransaction.serialize()).then(result => {
 				console.log("insert login transaction result", result)	
 			})
