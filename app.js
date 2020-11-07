@@ -1,3 +1,5 @@
+let loadPollMatch = document.location.href.match(/loadPoll=([a-zA-Z0-9_]+)/)
+
 function IS_DEV(){
 	return document.location.host.match(/localhost|goorm.io/)
 }
@@ -106,10 +108,15 @@ class SmartPoll_ extends SmartdomElement_{
 		}
 	}
 	
+	loadPoll(){
+		document.location.href = `/?loadPoll=${this.poll.pollId}`
+	}
+	
 	build(){
 		this.x().a(
 			div().fl().aic().jc("space-between").a(
-				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll),
+				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll).
+				curp().ae("click", _ => this.loadPoll()),
 				button(_ => this.addOption()).html("Add option").bc("#afa").marr(10),				
 				button(_ => this.delete()).html("Delete").bc("#faa").marr(10)
 			),
@@ -140,7 +147,7 @@ class SmartState_ extends SmartdomElement_{
 	
 	build(){
 		this.x().a(
-			this.state.polls.sort((a,b) => b.getNumVotes() - a.getNumVotes())
+			this.state.polls.filter(poll => loadPollMatch ? poll.pollId == loadPollMatch[1] : true).sort((a,b) => b.getNumVotes() - a.getNumVotes())
 				.map(poll => SmartPoll({poll: poll}))
 		)
 		
