@@ -194,7 +194,7 @@ function addLichessStrategy(app, props){
 			connectTransaction.topic = "oauthLogin"
 		
 			client.db("app").collection("transactions").insertOne(connectTransaction.serialize()).then(result => {
-				console.log("insert login transaction result", result)	
+				
 			})
 				
             return cb(null, profile)

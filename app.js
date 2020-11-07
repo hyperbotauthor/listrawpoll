@@ -322,6 +322,10 @@ function docInfo(doc){
 	if(doc.topic == "deletePoll"){
 		return doc.pollId
 	}
+	
+	if(doc.topic == "oauthLogin"){
+		return ""
+	}
 }
 
 if(document.location.href.match(/latest=true/)){
