@@ -82,7 +82,7 @@ class SmartPoll_ extends SmartdomElement_{
 	
 	addOption(){
 		if(!this.poll.author.equalTo(getUser())){
-			window.alert("You can only add an option your own poll.")
+			window.alert("You can only add an option to your own poll.")
 			
 			return
 		}
