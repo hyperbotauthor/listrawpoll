@@ -119,7 +119,7 @@ client.connect(err => {
 		client.db("app").collection("transactions").find({}).toArray().then(result => {
 			console.log("retrieved all transactions", result.length)
 			for(let transactionBlob of result){
-				let transaction = classes.transactionFromBlob(transactionBlob)
+				let transaction = classes.transactionFromBlob(transactionBlob)				
 				if(TRANSACTIONS.isOk(transaction)) STATE.executeTransaction(transaction)
 			}
 		}, err => console.error("getting all transactions failed", err))

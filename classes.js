@@ -202,6 +202,31 @@ class DeleteOption_ extends Transaction_{
 }
 function DeleteOption(props){return new DeleteOption_(props)}
 
+class OauthLogin_ extends Transaction_{
+	constructor(props){
+		super(props)
+		
+		this.deserialize(props)
+	}
+	
+	deserialize(props){
+		this.props = props || {}
+		
+		super.deserialize(this.props)
+		
+		this.topic = "oauthLogin"
+		
+		return this
+	}
+	
+	serialize(){
+		return {...super.serialize(), ...{			
+			
+		}}
+	}
+}
+function OauthLogin(props){return new OauthLogin_(props)}
+
 function transactionFromBlob(blob){
 	switch(blob.topic){
 		case "createPoll": return CreatePoll(blob)
@@ -209,6 +234,7 @@ function transactionFromBlob(blob){
 		case "addOption": return AddOption(blob)
 		case "addVote": return AddVote(blob)
 		case "deleteOption": return DeleteOption(blob)
+		case "oauthLogin": return OauthLogin(blob)
 	}
 }
 
