@@ -302,21 +302,29 @@ function isDocVerified(doc){
 	return true
 }
 
+function htmlLink(href, display){
+	return `<a href="${href}" rel="noopener noreferrer" target="_blank">${display}</a>`
+}
+
+function pollLink(pollId){
+	return htmlLink(`/?loadPoll=${pollId}`, pollId)
+}
+
 function docInfo(doc){
 	if(doc.topic == "addVote"){
-		return doc.vote.targetPollId + " / " + doc.vote.targetOptionId
+		return pollLink(doc.vote.targetPollId) + " / " + doc.vote.targetOptionId
 	}
 	
 	if(doc.topic == "addOption"){
-		return doc.option.parentPollId
+		return pollLink(doc.option.parentPollId)
 	}
 	
 	if(doc.topic == "deleteOption"){
-		return doc.parentPollId
+		return pollLink(doc.parentPollId)
 	}
 	
 	if(doc.topic == "createPoll"){
-		return doc.pollId
+		return pollLink(doc.pollId)
 	}
 	
 	if(doc.topic == "deletePoll"){
