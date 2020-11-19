@@ -159,7 +159,7 @@ class SmartState_ extends SmartdomElement_{
 		
 		if( a.getNumMe(me) != b.getNumMe(me) ) return b.getNumMe(me) - a.getNumMe(me)
 		
-		if( a.getNumMe(me) ) return a.createdAt - b.createdAt
+		if( a.getNumMe(me) ) return b.createdAt - a.createdAt
 		
 		return b.getNumVotes() - a.getNumVotes()
 	}
