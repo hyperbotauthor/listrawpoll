@@ -155,7 +155,11 @@ class SmartState_ extends SmartdomElement_{
 	}
 	
 	cmpPolls(a, b){
-		if( a.getNumMe(getUser()) != b.getNumMe(getUser()) ) return b.getNumMe(getUser()) - a.getNumMe(getUser())
+		let me = getUser()
+		
+		if( a.getNumMe(me) != b.getNumMe(me) ) return b.getNumMe(me) - a.getNumMe(me)
+		
+		if( a.getNumMe(me) ) return a.createdAt - b.createdAt
 		
 		return b.getNumVotes() - a.getNumVotes()
 	}
