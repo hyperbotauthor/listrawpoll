@@ -60,7 +60,7 @@ class SmartPoll_ extends SmartdomElement_{
 		
 		this.poll = this.props.poll || Poll()
 		
-		this.pad(2).mar(2).bc("#eee").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
+		this.pad(2).mar(2).bc(this.poll.author.equalTo(getUser()) ? "#afa" : "#eee").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
 		
 		this.build()
 	}
@@ -147,11 +147,17 @@ class SmartState_ extends SmartdomElement_{
 	
 	build(){
 		this.x().a(
-			this.state.polls.filter(poll => loadPollMatch ? poll.pollId == loadPollMatch[1] : true).sort((a,b) => b.getNumVotes() - a.getNumVotes())
+			this.state.polls.filter(poll => loadPollMatch ? poll.pollId == loadPollMatch[1] : true).sort(this.cmpPolls.bind(this))
 				.map(poll => SmartPoll({poll: poll}))
 		)
 		
 		return this
+	}
+	
+	cmpPolls(a, b){
+		if( a.getNumMe(getUser()) != b.getNumMe(getUser()) ) return b.getNumMe(getUser()) - a.getNumMe(getUser())
+		
+		return b.getNumVotes() - a.getNumVotes()
 	}
 }
 function SmartState(props){return new SmartState_(props)}

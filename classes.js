@@ -296,6 +296,10 @@ class Poll_{
 		
 		return numVotes
 	}
+	
+	getNumMe(me){
+		return this.author.equalTo(me) ? 1 : 0
+	}
 }
 function Poll(props){return new Poll_(props)}
 
