@@ -211,6 +211,39 @@ class SmartOption_ extends SmartdomElement_{
 		})
 	}
 	
+	edit(){
+		if(!this.parentPoll.poll.author.equalTo(getUser())){
+			window.alert("You can only edit an option from your own poll.")
+			
+			return
+		}
+		
+		let editedOption = window.prompt("Edit option:", this.option.option)
+		
+		let transaction = DeleteOption({				
+			parentPollId: this.option.parentPollId,
+			optionId: this.option.optionId
+		})
+
+		addTransaction(transaction).then(result => {
+			console.info(result)
+		})
+		
+		let option = PollOption({
+			author: getUser(),
+			option: editedOption,
+			parentPollId: this.option.parentPollId
+		})
+
+		let transaction = AddOption({				
+			option: option
+		})
+
+		addTransaction(transaction).then(result => {
+			console.info(result)
+		})
+	}
+	
 	showVotes(){
 		this.showVotesDiv.x().disp("none")
 		
@@ -250,6 +283,7 @@ class SmartOption_ extends SmartdomElement_{
 				),
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
+			button(_=>this.edit()).html("Edit").bc("#dda"),
 			button(_=>this.delete()).html("Delete").bc("#faa")
 		)
 	}
