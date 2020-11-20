@@ -400,17 +400,20 @@ class App_ extends SmartdomElement_{
 	}
 	
 	build(){
-		this.controlPanel = div().mar(3).pad(3).bc("#7a7").a(
-			button(_=>this.createPoll()).bc("#afa").fs(20).html("Create poll"),
-			button(_=>this.changeSort()).bc(SORT_UNIQUE() ? "#ffa" : "#aaf"	).fs(14)
-				.html(SORT_UNIQUE() ? "Sort by total" : "Sort by unique").marl(10)
-		)
+		this.controlPanel = div().mar(6).pad(6).bc("#8b8").por().h(35).bdrs("solid").bdrr(10).bdrc("#773")
 		
 		this.x().bc("#ffa").por().a(			
 			div().por().t(170).a(
-				this.controlPanel,			
-				SmartState({state: this.state}),
 				div().poa().t(-185).l(-20).addStyle("zIndex", "100").pad(3).fs(20).html(`<img src="stuff/listrawpoll.png"></img>`),
+				this.controlPanel.a(
+					div().poa().addStyle("zIndex", "200").a(
+						button(_=>this.createPoll()).bc("#afa").fs(22).pad(3)
+						.addStyle("paddingRight", "10px").addStyle("paddingLeft", "10px").html("Create poll"),
+						button(_=>this.changeSort()).bc(SORT_UNIQUE() ? "#ffa" : "#aaf"	).fs(14)
+							.html(SORT_UNIQUE() ? "Sort by total" : "Sort by unique").marl(10)
+					)
+				),				
+				SmartState({state: this.state}).mart(5),
 			)			
 		)
 		
