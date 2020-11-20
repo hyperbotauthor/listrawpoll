@@ -222,6 +222,8 @@ class SmartOption_ extends SmartdomElement_{
 		this.build()
 		
 		this.fl().aic().jc("space-between").pad(2).mar(2).bc("#aff")
+		
+		this.showVotesOpen = {}
 	}	
 	
 	vote(quantity){
@@ -289,44 +291,52 @@ class SmartOption_ extends SmartdomElement_{
 		})
 	}
 	
-	showVotes(showCount){
-		this.showVotesDiv.x().disp("none")
+	showVotes(kind, showCount){
+		let isOpen = this.showVotesOpen[kind]
 		
-		if(this.showVotesOpen){			
-			this.showVotesOpen = false
+		for(let kind of ["total", "unique"]){
+			this.showVotesDivs[kind].x().disp("none")	
+			this.showVotesOpen[kind] = false
+		}
+		
+		if(isOpen){			
+			this.showVotesOpen[kind] = false
 			return
 		}
 		
-		this.showVotesDiv.marl(-200).w(600).fl().addStyle("flexWrap", "wrap").a(Object.entries(this.option.getVoters())
+		this.showVotesOpen[kind] = true
+		
+		this.showVotesDivs[kind].fl().a(Object.entries(this.option.getVoters())
 			.filter(entry => entry[1].numVotes).sort((a,b) => b[1].numVotes - a[1].numVotes).map(entry => 
 				UserWithVote({username: entry[0], votes: entry[1].numVotes, showCount: showCount})
 			)
 		)
 		
-		this.showVotesOpen = true
+		this.showVotesOpen[kind] = true
+	}
+	
+	createShowVotesDiv(){
+		return div().disp("none").poa().pad(5).bc("#e8f")
+					.w(600).addStyle("flexWrap", "wrap")
+					.t(30).l(-300).addStyle("zIndex", 100)
 	}
 	
 	build(){
-		let voteBlocks = [
+		this.showVotesDivs = {
+			"total": this.createShowVotesDiv(),
+			"unique": this.createShowVotesDiv(),
+		}
+		
+		let voteBlocks = ["total", "unique"].map(kind => 
 			[
-				div().html(`total`),
-				div().por().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).c("#070").fwb()
-					.html(`${this.option.getNumVotes()}`).curp()
-					.ae("click", this.showVotes.bind(this, true)).a(
-						this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
-							.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
+				div().html(`${kind}`),
+				div().por().w(50).tac().pad(2).mar(2).bc(kind == "total" ? "#ff0" : "#ccf").fs(18).c("#070").fwb()
+					.html(`${kind == "total" ? this.option.getNumVotes() : this.option.getNumVoters()}`).curp()
+					.ae("click", this.showVotes.bind(this, kind, kind == "total")).a(
+						this.showVotesDivs[kind]
 				)
-			],
-			[
-				div().html(`unique`),
-				div().por().w(50).tac().pad(2).mar(2).bc("#adf").fs(18).c("#070").fwb()
-					.html(`${this.option.getNumVoters()}`).curp()
-					.ae("click", this.showVotes.bind(this, false)).a(
-						this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
-							.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
-				),
 			]
-		]
+		)
 		
 		this.x().a(
 			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option)
