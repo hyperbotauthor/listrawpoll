@@ -467,6 +467,26 @@ class PollOption_{
 	getNumVotes(){
 		return this.getNumVotesFor(this.votes)
 	}
+	
+	getVoters(){
+		let voters = {}
+		
+		for(let vote of this.votes){
+			let voter = vote.author.username
+			
+			if(!voters[voter]) voters[voter] = {numVotes: 0}
+			
+			let newNumVotes = voters[voter].numVotes + vote.quantity
+			
+			if(newNumVotes >= 0) voters[voter].numVotes = newNumVotes
+		}
+		
+		return voters
+	}
+	
+	getNumVoters(){
+		return Object.keys(this.getVoters()).length
+	}
 }
 function PollOption(props){return new PollOption_(props)}
 
