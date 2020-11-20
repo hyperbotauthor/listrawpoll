@@ -4,6 +4,28 @@ function IS_DEV(){
 	return document.location.host.match(/localhost|goorm.io/)
 }
 
+function SORT_UNIQUE(){
+	return document.location.href.match(/sort=unique/)
+}
+
+function getPollsUrl(unique, loadPoll){
+	let pollUrls = []
+	
+	if(loadPoll){
+		pollUrls.push(`loadPoll=${loadPoll}`)	
+	}else{
+		if(loadPollMatch) pollUrls.push(`loadPoll=${loadPollMatch[1]}`)	
+	}
+	
+	if(unique) pollUrls.push(`sort=unique`)
+	
+	if(pollUrls.length){
+		return `/?${pollUrls.join("&")}`
+	}
+	
+	return `/`
+}
+
 function getUser(){
 	return IS_DEV() ? User({
 		id: "@nonymous",
@@ -132,7 +154,7 @@ class SmartPoll_ extends SmartdomElement_{
 	}
 	
 	loadPoll(){
-		document.location.href = `/?loadPoll=${this.poll.pollId}`
+		document.location.href = getPollsUrl(SORT_UNIQUE(), this.poll.pollId)
 	}
 	
 	build(){
@@ -145,7 +167,7 @@ class SmartPoll_ extends SmartdomElement_{
 			),
 			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
 			this.optionsDiv = div().pad(2).marl(10).bc("#de9").a(
-				this.poll.options.sort((a,b) => b.getNumVotes() - a.getNumVotes())
+				this.poll.options.sort((a,b) => SORT_UNIQUE() ? b.getNumVoters() - a.getNumVoters() : b.getNumVotes() - a.getNumVotes())
 					.map(option => SmartOption({option: option, parentPoll: this}))
 			)			
 		)
@@ -285,22 +307,38 @@ class SmartOption_ extends SmartdomElement_{
 	}
 	
 	build(){
+		let voteBlocks = [
+			[
+				div().html(`total`),
+				div().por().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).c("#070").fwb()
+					.html(`${this.option.getNumVotes()}`).curp()
+					.ae("click", this.showVotes.bind(this, true)).a(
+						this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
+							.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
+				)
+			],
+			[
+				div().html(`unique`),
+				div().por().w(50).tac().pad(2).mar(2).bc("#adf").fs(18).c("#070").fwb()
+					.html(`${this.option.getNumVoters()}`).curp()
+					.ae("click", this.showVotes.bind(this, false)).a(
+						this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
+							.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
+				),
+			]
+		]
+		
 		this.x().a(
-			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
-			div().html(`total`),
-			div().por().w(50).tac().pad(2).mar(2).bc("#ff0").fs(18).c("#070").fwb()
-				.html(`${this.option.getNumVotes()}`).curp()
-				.ae("click", this.showVotes.bind(this, true)).a(
-					this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
-						.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
-				),
-			div().html(`unique`),
-			div().por().w(50).tac().pad(2).mar(2).bc("#adf").fs(18).c("#070").fwb()
-				.html(`${this.option.getNumVoters()}`).curp()
-				.ae("click", this.showVotes.bind(this, false)).a(
-					this.showVotesDiv = div().disp("none").poa().pad(5).bc("#e8f")
-						.mar(2).mart(6).marl(3).addStyle("zIndex", 100)
-				),
+			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option)
+		)
+		
+		if(SORT_UNIQUE()) voteBlocks.reverse()
+		
+		for(let block of voteBlocks){
+			this.a(block)
+		}
+		
+		this.a(			
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
 			button(_=>this.edit()).html("Edit").bc("#aad"),
@@ -340,9 +378,15 @@ class App_ extends SmartdomElement_{
 		}
 	}
 	
+	changeSort(){
+		document.location.href = getPollsUrl(!SORT_UNIQUE())
+	}
+	
 	build(){
 		this.controlPanel = div().mar(3).pad(3).bc("#7a7").a(
-			button(_=>this.createPoll()).bc("#afa").fs(20).html("Create poll")
+			button(_=>this.createPoll()).bc("#afa").fs(20).html("Create poll"),
+			button(_=>this.changeSort()).bc(SORT_UNIQUE() ? "#ffa" : "#aaf"	).fs(14)
+				.html(SORT_UNIQUE() ? "Sort by total" : "Sort by unique").marl(10)
 		)
 		
 		this.x().a(
@@ -371,7 +415,7 @@ function htmlLink(href, display){
 }
 
 function pollLink(pollId){
-	return htmlLink(`/?loadPoll=${pollId}`, pollId)
+	return getPollsUrl(SORT_UNIQUE(), pollId)
 }
 
 function docInfo(doc){
