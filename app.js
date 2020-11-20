@@ -85,15 +85,15 @@ function addTransaction(transaction){
 }
 
 class ControlButton_ extends button_{
-	constructor(props){
-		super(props)
+	constructor(callback){
+		super()
 		
 		this.bdrs("solid").bdrw(1).bdrc("#aaa").bdrr(10).pad(4)
 			.addStyle("paddingLeft", "10px").addStyle("paddingRight", "10px")
 			.addStyle("boxShadow", "3px 3px #000")
 	}
 }
-function ControlButton(props){return new ControlButton_(props)}
+function ControlButton(callback){return new ControlButton_(callback)}
 
 class UserWithVote_ extends SmartdomElement_{
 	constructor(props){
@@ -371,7 +371,7 @@ class SmartOption_ extends SmartdomElement_{
 		}
 		
 		this.a(			
-			ControlButton(_=>this.vote(1)).html("Vote").bc("#afa"),
+			ControlButton(_=>this.vote(1)).html(`<div style="display: flex; align-items: center;">Vote <img style="margin-left: 5px;" width="18px" src="/stuff/tick.png"></img></div>`).bc("#afa"),
 			ControlButton(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
 			ControlButton(_=>this.edit()).html("Edit").bc("#aad").op(this.isMine() ? 1 : 0.5),
 			ControlButton(_=>this.delete()).html("Delete").bc("#faa").op(this.isMine() ? 1 : 0.5)
