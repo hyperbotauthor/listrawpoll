@@ -360,8 +360,9 @@ class SmartOption_ extends SmartdomElement_{
 			]
 		)
 		
-		this.x().a(
-			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option)
+		this.x().a(			
+			div().w(550).pad(2).mar(2).bc("#edf").fs(18).fwb().html(this.option.option),
+			ControlButton(_=>this.vote(1)).html(`<div style="display: flex; align-items: center;">Vote <img style="margin-left: 5px;" width="18px" src="/stuff/tick.png"></img></div>`).bc("#afa")
 		)
 		
 		if(SORT_UNIQUE()) voteBlocks.reverse()
@@ -370,8 +371,7 @@ class SmartOption_ extends SmartdomElement_{
 			this.a(block)
 		}
 		
-		this.a(			
-			ControlButton(_=>this.vote(1)).html(`<div style="display: flex; align-items: center;">Vote <img style="margin-left: 5px;" width="18px" src="/stuff/tick.png"></img></div>`).bc("#afa"),
+		this.a(						
 			ControlButton(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
 			ControlButton(_=>this.edit()).html("Edit").bc("#aad").op(this.isMine() ? 1 : 0.5),
 			ControlButton(_=>this.delete()).html("Delete").bc("#faa").op(this.isMine() ? 1 : 0.5)
