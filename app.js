@@ -235,7 +235,7 @@ class SmartOption_ extends SmartdomElement_{
 			parentPollId: this.option.parentPollId
 		})
 
-		let transaction = AddOption({				
+		transaction = AddOption({				
 			option: option
 		})
 
