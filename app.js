@@ -84,6 +84,17 @@ function addTransaction(transaction){
 	})	
 }
 
+class ControlButton_ extends button_{
+	constructor(props){
+		super(props)
+		
+		this.bdrs("solid").bdrw(1).bdrc("#aaa").bdrr(10).pad(4)
+			.addStyle("paddingLeft", "10px").addStyle("paddingRight", "10px")
+			.addStyle("boxShadow", "3px 3px #000")
+	}
+}
+function ControlButton(props){return new ControlButton_(props)}
+
 class UserWithVote_ extends SmartdomElement_{
 	constructor(props){
 		super({...props, ...{tagName: "div"}})
@@ -166,7 +177,7 @@ class SmartPoll_ extends SmartdomElement_{
 			div().fl().aic().jc("space-between").a(
 				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll).
 				curp().ae("click", _ => this.loadPoll()),
-					button(_ => this.addOption()).html("Add option").bc("#afa").marr(10).op(this.isMine() ? 1 : 0.5),							button(_ => this.delete()).html("Delete").bc("#faa").marr(10).op(this.isMine() ? 1 : 0.5)
+					ControlButton(_ => this.addOption()).html("Add option").bc("#afa").marr(10).op(this.isMine() ? 1 : 0.5),					ControlButton(_ => this.delete()).html("Delete").bc("#faa").marr(10).op(this.isMine() ? 1 : 0.5)
 			),
 			div().marl(10).pad(2).bc(this.isMine() ? "#9e9" : "#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
 			this.optionsDiv = div().pad(2).marl(10).bc("#de9").a(
@@ -360,10 +371,10 @@ class SmartOption_ extends SmartdomElement_{
 		}
 		
 		this.a(			
-			button(_=>this.vote(1)).html("Vote").bc("#afa"),
-			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
-			button(_=>this.edit()).html("Edit").bc("#aad").op(this.isMine() ? 1 : 0.5),
-			button(_=>this.delete()).html("Delete").bc("#faa").op(this.isMine() ? 1 : 0.5)
+			ControlButton(_=>this.vote(1)).html("Vote").bc("#afa"),
+			ControlButton(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
+			ControlButton(_=>this.edit()).html("Edit").bc("#aad").op(this.isMine() ? 1 : 0.5),
+			ControlButton(_=>this.delete()).html("Delete").bc("#faa").op(this.isMine() ? 1 : 0.5)
 		)
 	}
 }
@@ -412,9 +423,9 @@ class App_ extends SmartdomElement_{
 				div().poa().t(-185).l(-20).addStyle("zIndex", "100").pad(3).fs(20).html(`<img src="stuff/listrawpoll.png"></img>`),
 				this.controlPanel.a(
 					div().poa().addStyle("zIndex", "200").a(
-						button(_=>this.createPoll()).bc("#afa").fs(22).pad(3)
+						ControlButton(_=>this.createPoll()).bc("#afa").fs(22).pad(3)
 						.addStyle("paddingRight", "10px").addStyle("paddingLeft", "10px").html("Create poll"),
-						button(_=>this.changeSort()).bc(SORT_UNIQUE() ? "#ffa" : "#aaf"	).fs(14)
+						ControlButton(_=>this.changeSort()).bc(SORT_UNIQUE() ? "#ffa" : "#aaf"	).fs(14)
 							.html(SORT_UNIQUE() ? "Sort by total" : "Sort by unique").marl(10)
 					)
 				),				
