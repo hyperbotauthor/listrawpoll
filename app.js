@@ -283,7 +283,7 @@ class SmartOption_ extends SmartdomElement_{
 				),
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
-			button(_=>this.edit()).html("Edit").bc("#dda"),
+			button(_=>this.edit()).html("Edit").bc("#aad"),
 			button(_=>this.delete()).html("Delete").bc("#faa")
 		)
 	}
