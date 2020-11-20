@@ -86,7 +86,7 @@ function addTransaction(transaction){
 
 class ControlButton_ extends button_{
 	constructor(callback){
-		super()
+		super(callback)
 		
 		this.bdrs("solid").bdrw(1).bdrc("#aaa").bdrr(10).pad(4)
 			.addStyle("paddingLeft", "10px").addStyle("paddingRight", "10px")
