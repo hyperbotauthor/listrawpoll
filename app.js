@@ -406,10 +406,12 @@ class App_ extends SmartdomElement_{
 				.html(SORT_UNIQUE() ? "Sort by total" : "Sort by unique").marl(10)
 		)
 		
-		this.x().a(
-			div().pad(3).bc("#ffe").fs(20).html(`Lichess Straw Poll.`),
-			this.controlPanel,			
-			SmartState({state: this.state})
+		this.x().bc("#ffa").por().a(			
+			div().por().t(170).a(
+				this.controlPanel,			
+				SmartState({state: this.state}),
+				div().poa().t(-185).l(-20).addStyle("zIndex", "100").pad(3).fs(20).html(`<img src="stuff/listrawpoll.png"></img>`),
+			)			
 		)
 		
 		return this
