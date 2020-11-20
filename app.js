@@ -415,7 +415,7 @@ function htmlLink(href, display){
 }
 
 function pollLink(pollId){
-	return getPollsUrl(SORT_UNIQUE(), pollId)
+	return htmlLink(getPollsUrl(false, pollId), pollId)
 }
 
 function docInfo(doc){
