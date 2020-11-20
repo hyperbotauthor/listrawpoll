@@ -36,7 +36,13 @@ class Transactions{
 	isExhausted(user){		
 		for(let quota of this.quotas) quota.init()
 		
-		for(let transaction of this.transactions){
+		let filteredTransactions = this.transactions.filter(transaction => {
+			if(transaction instanceof classes.DeletePoll_) return false
+			if(transaction instanceof classes.DeleteOption_) return false
+			return true
+		})
+		
+		for(let transaction of filteredTransactions){
 			for(let quota of this.quotas){
 				if(quota.isExhausted(user, transaction)){
 					return true
