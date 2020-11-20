@@ -274,6 +274,10 @@ class SmartOption_ extends SmartdomElement_{
 		
 		let editedOption = window.prompt("Edit option:", this.option.option)
 		
+		if(!editedOption){
+			return
+		}
+		
 		let transaction = DeleteOption({				
 			parentPollId: this.option.parentPollId,
 			optionId: this.option.optionId
