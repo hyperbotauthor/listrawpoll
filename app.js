@@ -105,9 +105,13 @@ class SmartPoll_ extends SmartdomElement_{
 		
 		this.poll = this.props.poll || Poll()
 		
-		this.pad(2).mar(2).bc(this.poll.author.equalTo(getUser()) ? "#afa" : "#eee").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
+		this.pad(2).mar(2).bc(this.isMine() ? "#afa" : "#eee").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
 		
 		this.build()
+	}
+	
+	isMine(){
+		return this.poll.author.equalTo(getUser())
 	}
 	
 	delete(){		
@@ -162,10 +166,9 @@ class SmartPoll_ extends SmartdomElement_{
 			div().fl().aic().jc("space-between").a(
 				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll).
 				curp().ae("click", _ => this.loadPoll()),
-				button(_ => this.addOption()).html("Add option").bc("#afa").marr(10),				
-				button(_ => this.delete()).html("Delete").bc("#faa").marr(10)
+					button(_ => this.addOption()).html("Add option").bc("#afa").marr(10).op(this.isMine() ? 1 : 0.5),							button(_ => this.delete()).html("Delete").bc("#faa").marr(10).op(this.isMine() ? 1 : 0.5)
 			),
-			div().marl(10).pad(2).bc("#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
+			div().marl(10).pad(2).bc(this.isMine() ? "#9e9" : "#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
 			this.optionsDiv = div().pad(2).marl(10).bc("#de9").a(
 				this.poll.options.sort((a,b) => SORT_UNIQUE() ? b.getNumVoters() - a.getNumVoters() : b.getNumVotes() - a.getNumVotes())
 					.map(option => SmartOption({option: option, parentPoll: this}))
@@ -225,6 +228,10 @@ class SmartOption_ extends SmartdomElement_{
 		
 		this.showVotesOpen = {}
 	}	
+	
+	isMine(){
+		return this.parentPoll.isMine()
+	}
 	
 	vote(quantity){
 		let transaction = AddVote({				
@@ -351,8 +358,8 @@ class SmartOption_ extends SmartdomElement_{
 		this.a(			
 			button(_=>this.vote(1)).html("Vote").bc("#afa"),
 			button(_=>this.vote(-1)).html("Unvote").bc("#dd7"),
-			button(_=>this.edit()).html("Edit").bc("#aad"),
-			button(_=>this.delete()).html("Delete").bc("#faa")
+			button(_=>this.edit()).html("Edit").bc("#aad").op(this.isMine() ? 1 : 0.5),
+			button(_=>this.delete()).html("Delete").bc("#faa").op(this.isMine() ? 1 : 0.5)
 		)
 	}
 }
