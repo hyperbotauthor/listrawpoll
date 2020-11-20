@@ -297,6 +297,14 @@ class Poll_{
 		return numVotes
 	}
 	
+	getNumVoters(){
+		let numVotes = 0
+		
+		this.options.forEach(options => numVotes += options.getNumVoters())
+		
+		return numVotes
+	}
+	
 	getNumMe(me){
 		return this.author.equalTo(me) ? 1 : 0
 	}

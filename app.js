@@ -89,11 +89,11 @@ class UserWithVote_ extends SmartdomElement_{
 		super({...props, ...{tagName: "div"}})
 		
 		this.dib().fl().aic().mar(2).pad(2).bc("#eee").a(
-			div().mar(2).pad(3).bc("#add").addStyle("fontStyle", "italic").html(userLink(this.props.username))
+			div().mar(2).pad(3).addStyle("paddingLeft", "8px").addStyle("paddingRight", "8px").bc("#add").addStyle("fontStyle", "italic").html(userLink(this.props.username))
 		)
 		
 		if(this.props.showCount) this.a(
-			div().mar(2).pad(2).bc("#ffa").fwb().c("#070").html(`${this.props.votes}`)
+			div().mar(2).marl(4).marr(4).pad(2).bc("#ffa").fwb().c("#070").html(`${this.props.votes}`)
 		)
 	}
 }
@@ -206,7 +206,7 @@ class SmartState_ extends SmartdomElement_{
 		
 		if( a.getNumMe(me) ) return b.createdAt - a.createdAt
 		
-		return b.getNumVotes() - a.getNumVotes()
+		return SORT_UNIQUE() ? b.getNumVoters() - a.getNumVoters() : b.getNumVotes() - a.getNumVotes()
 	}
 }
 function SmartState(props){return new SmartState_(props)}
