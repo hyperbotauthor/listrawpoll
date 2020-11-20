@@ -298,7 +298,7 @@ class SmartOption_ extends SmartdomElement_{
 		}
 		
 		this.showVotesDiv.marl(-200).w(600).fl().addStyle("flexWrap", "wrap").a(Object.entries(this.option.getVoters())
-			.filter(entry => entry[1].numVotes).map(entry => 
+			.filter(entry => entry[1].numVotes).sort((a,b) => b[1].numVotes - a[1].numVotes).map(entry => 
 				UserWithVote({username: entry[0], votes: entry[1].numVotes, showCount: showCount})
 			)
 		)
