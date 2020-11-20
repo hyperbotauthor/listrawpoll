@@ -402,8 +402,9 @@ class App_ extends SmartdomElement_{
 	build(){
 		this.controlPanel = div().mar(6).pad(6).bc("#8b8").por().h(35).bdrs("solid").bdrr(10).bdrc("#773")
 		
-		this.x().bc("#ffa").por().a(			
-			div().por().t(170).a(
+		this.x().bc("#ffa").a(			
+			div().h(165),
+			div().por().a(
 				div().poa().t(-185).l(-20).addStyle("zIndex", "100").pad(3).fs(20).html(`<img src="stuff/listrawpoll.png"></img>`),
 				this.controlPanel.a(
 					div().poa().addStyle("zIndex", "200").a(
