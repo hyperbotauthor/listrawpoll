@@ -37,8 +37,12 @@ class Transactions{
 		for(let quota of this.quotas) quota.init()
 		
 		let filteredTransactions = this.transactions.filter(transaction => {
-			if(transaction instanceof classes.DeletePoll_) return false
-			if(transaction instanceof classes.DeleteOption_) return false
+			try{
+				if(transaction instanceof classes.DeletePoll_) return false
+				if(transaction instanceof classes.DeleteOption_) return false
+			}catch(err){
+				console.log("transaction", transaction, "delpoll", classes.DeletePoll_, "delopt", classes.DeleteOption_)
+			}
 			return true
 		})
 		
