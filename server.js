@@ -307,7 +307,7 @@ app.post('/api', (req, res) => {
 				let result = STATE.executeTransaction(transaction)
 				
 				if(result){
-					if(typeof result == "object" && result.error){
+					if((typeof result == "object") && result.error){
 						apiSend(res, result)
 						
 						return
