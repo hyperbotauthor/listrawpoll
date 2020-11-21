@@ -71,8 +71,7 @@ class TransactionQuota{
 		this.now = new Date().getTime()
 	}
 	
-	isExhausted(user, transaction){
-		console.log(user, transaction.verifiedUser)
+	isExhausted(user, transaction){		
 		if(!transaction.verifiedUser.equalTo(user)) return false
 		
 		let elapsed = this.now - transaction.createdAt
@@ -318,6 +317,10 @@ app.post('/api', (req, res) => {
 					topic: "setState",
 					state: STATE.serialize()
 				})	
+				
+				apiSend({
+					ok: true
+				})
 			}
 		})
 	}
