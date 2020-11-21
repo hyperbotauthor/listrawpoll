@@ -497,7 +497,11 @@ class PollOption_{
 			
 			let newNumVotes = voters[voter].numVotes + vote.quantity
 			
-			if(newNumVotes >= 0) voters[voter].numVotes = newNumVotes
+			if(newNumVotes > 0){
+				 voters[voter].numVotes = newNumVotes
+			}else{
+				delete voters[voter]
+			}
 		}
 		
 		return voters
