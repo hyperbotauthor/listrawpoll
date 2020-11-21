@@ -100,7 +100,7 @@ class UserWithVote_ extends SmartdomElement_{
 		super({...props, ...{tagName: "div"}})
 		
 		this.dib().fl().aic().mar(2).pad(2).bc("#eee").a(
-			div().mar(2).pad(3).addStyle("paddingLeft", "8px").addStyle("paddingRight", "8px").bc("#add").addStyle("fontStyle", "italic").html(userLink(this.props.username))
+			div().mar(2).pad(3).addStyle("paddingLeft", "8px").addStyle("paddingRight", "8px").bc("#add").ffms().addStyle("fontStyle", "italic").html(userLink(this.props.username))
 		)
 		
 		if(this.props.showCount) this.a(
@@ -314,6 +314,10 @@ class SmartOption_ extends SmartdomElement_{
 	}
 	
 	showVotes(kind, showCount){
+		const entries = Object.entries(this.option.getVoters())
+		
+		if(!entries.length) return
+		
 		let isOpen = this.showVotesOpen[kind]
 		
 		for(let kind of ["total", "unique"]){
@@ -328,7 +332,7 @@ class SmartOption_ extends SmartdomElement_{
 		
 		this.showVotesOpen[kind] = true
 		
-		this.showVotesDivs[kind].fl().a(Object.entries(this.option.getVoters())
+		this.showVotesDivs[kind].fl().a(entries
 			.filter(entry => entry[1].numVotes).sort((a,b) => b[1].numVotes - a[1].numVotes).map(entry => 
 				UserWithVote({username: entry[0], votes: entry[1].numVotes, showCount: showCount})
 			)
@@ -339,7 +343,7 @@ class SmartOption_ extends SmartdomElement_{
 	
 	createShowVotesDiv(){
 		return div().disp("none").poa().pad(5).bc("#e8f")
-					.w(600).addStyle("flexWrap", "wrap")
+					.w(600).jcsa().addStyle("flexWrap", "wrap")
 					.t(30).l(-300).addStyle("zIndex", 100)
 	}
 	
