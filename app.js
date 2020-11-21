@@ -76,7 +76,9 @@ function addTransaction(transaction){
 			transaction: transaction.serialize()
 		}).then(result => {
 			if(result.quotaExceeded){
-				window.alert("Transaction quouta exceeded. Wait a little.")				
+				window.alert("Transaction quota exceeded. Wait a little.")				
+			}else if(result.error){
+				window.alert(result.status)
 			}else{
 				resolve(result)
 			}

@@ -274,6 +274,17 @@ class Poll_{
 	}
 	
 	deleteOptionById(optionId){
+		let option = this.options.find(option => option.optionId == optionId)
+		
+		if(!option) return
+		
+		if(option.getNumVotes() > 0){
+			return {
+				error: true,
+				status: "Not allowed to delete option that has votes."
+			}
+		}
+		
 		this.options = this.options.filter(option => option.optionId != optionId)
 	}
 	
@@ -388,7 +399,7 @@ class State_{
 					return
 				}
 				
-				targetPoll.deleteOptionById(transaction.optionId)
+				return targetPoll.deleteOptionById(transaction.optionId)
 			}
 		}
 	}

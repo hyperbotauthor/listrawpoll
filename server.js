@@ -303,10 +303,16 @@ app.post('/api', (req, res) => {
 		TRANSACTIONS.add(transaction)
 		
 		client.db("app").collection("transactions").insertOne(transaction.serialize()).then(result => {
-			apiSend(res, result)
-			
 			if(ok){
-				STATE.executeTransaction(transaction)
+				let result = STATE.executeTransaction(transaction)
+				
+				if(result){
+					if(result instanceof "object" && result.error){
+						apiSend(res, result)
+						
+						return
+					}
+				}
 				
 				sse.ssesend({
 					topic: "setState",
