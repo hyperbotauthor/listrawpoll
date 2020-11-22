@@ -1,5 +1,22 @@
 let loadPollMatch = document.location.href.match(/loadPoll=([a-zA-Z0-9_]+)/)
 
+function storeLocal(path, value){
+	localStorage.setItem(path, JSON.stringify(value))
+}
+
+function getLocal(path, value){
+	let stored = localStorage.getItem(path)
+	
+	if(!stored) return value
+	
+	try{
+		parseValue = JSON.parse(stored)
+		return parseValue
+	}catch(err){
+		return value
+	}
+}
+
 function IS_DEV(){
 	return document.location.host.match(/localhost|goorm.io/)
 }
@@ -174,15 +191,32 @@ class SmartPoll_ extends SmartdomElement_{
 		document.location.href = getPollsUrl(SORT_UNIQUE(), this.poll.pollId)
 	}
 	
+	collapse(){
+		storeLocal(`collapsePoll/${this.poll.pollId}`, true)
+		this.build()
+	}
+	
+	expand(){
+		storeLocal(`collapsePoll/${this.poll.pollId}`, false)
+		this.build()
+	}
+	
 	build(){
+		let collapsed = getLocal(`collapsePoll/${this.poll.pollId}`)
+		
 		this.x().a(
 			div().fl().aic().jc("space-between").a(
-				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll).
-				curp().ae("click", _ => this.loadPoll()),
-					ControlButton(_ => this.addOption()).html("Add option").bc("#afa").marr(10).op(this.isMine() ? 1 : 0.5),					ControlButton(_ => this.delete()).html("Delete").bc("#faa").marr(10).op(this.isMine() ? 1 : 0.5)
+				div().c("#007").fwb().w(600).fs(22).mar(2).pad(2).bc("#ffe").html(this.poll.poll).curp().ae("click", _ => this.loadPoll()),
+				ControlButton(_ => this.addOption()).html("Add option").bc("#afa").marr(10).op(this.isMine() ? 1 : 0.5),
+				collapsed ?
+					ControlButton(_ => this.expand()).html("Expand").bc("#afa")
+				:
+					ControlButton(_ => this.collapse()).html("Collapse").bc("#dd8")
+				,
+				ControlButton(_ => this.delete()).html("Delete").bc("#faa").marr(10).op(this.isMine() ? 1 : 0.5)
 			),
-			div().marl(10).pad(2).bc(this.isMine() ? "#9e9" : "#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
-			this.optionsDiv = div().pad(2).marl(10).bc("#de9").a(
+			collapsed ? div() : div().marl(10).pad(2).bc(this.isMine() ? "#9e9" : "#eee").html(`by <b style="color:#070">${this.poll.author.username}</b> <small><i><a href="https://lichess.org/@/${this.poll.author.username}" rel="noopener noreferrer" target="_blank">view profile</a> </i>created at ${new Date(this.poll.createdAt).toLocaleString()} ${this.poll.pollId}	</small>`),
+			this.optionsDiv = collapsed ? div() : div().pad(2).marl(10).bc("#de9").a(
 				this.poll.options.sort((a,b) => SORT_UNIQUE() ? b.getNumVoters() - a.getNumVoters() : b.getNumVotes() - a.getNumVotes())
 					.map(option => SmartOption({option: option, parentPoll: this}))
 			)			
