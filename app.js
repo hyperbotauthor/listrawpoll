@@ -133,6 +133,8 @@ class SmartPoll_ extends SmartdomElement_{
 	constructor(props){
 		super({...props, ...{tagName: "div"}})
 		
+		this.parentState = this.props.parentState
+		
 		this.poll = this.props.poll || Poll()
 		
 		this.pad(2).mar(2).bc(this.isMine() ? "#afa" : "#eee").bdrs("solid").bdrw(1).bdrc("#777").bdrr(10)
@@ -193,7 +195,7 @@ class SmartPoll_ extends SmartdomElement_{
 	
 	collapse(){
 		storeLocal(`collapsePoll/${this.poll.pollId}`, true)
-		this.build()
+		this.parentState.build()
 	}
 	
 	expand(){
@@ -243,7 +245,7 @@ class SmartState_ extends SmartdomElement_{
 	build(){
 		this.x().a(
 			this.state.polls.filter(poll => loadPollMatch ? poll.pollId == loadPollMatch[1] : true).sort(this.cmpPolls.bind(this))
-				.map(poll => SmartPoll({poll: poll}))
+				.map(poll => SmartPoll({parentState: this, poll: poll}))
 		)
 		
 		return this
@@ -255,6 +257,12 @@ class SmartState_ extends SmartdomElement_{
 		if( a.getNumMe(me) != b.getNumMe(me) ) return b.getNumMe(me) - a.getNumMe(me)
 		
 		if( a.getNumMe(me) ) return b.createdAt - a.createdAt
+		
+		let [aColl, bColl] = [a, b].map(poll => getLocal(`collapsePoll/${poll.pollId}`) ? 1 : 0)
+		
+		console.log(aColl, bColl)
+		
+		if(aColl != bColl) return aColl - bColl
 		
 		return SORT_UNIQUE() ? b.getNumVoters() - a.getNumVoters() : b.getNumVotes() - a.getNumVotes()
 	}
