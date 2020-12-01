@@ -200,7 +200,7 @@ class SmartPoll_ extends SmartdomElement_{
 	
 	expand(){
 		storeLocal(`collapsePoll/${this.poll.pollId}`, false)
-		this.build()
+		this.parentState.build()
 	}
 	
 	build(){
