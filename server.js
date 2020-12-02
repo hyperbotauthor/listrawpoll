@@ -111,6 +111,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 const passport = require('passport')
 const LichessStrategy = require('passport-lichess').Strategy
+const DiscordStrategy = require('passport-discord').Strategy
 
 let STATE = classes.State()
 
@@ -176,33 +177,36 @@ function getHostProtAndUrl(props){
     return [host, prot, url]
 }
 
-function addLichessStrategy(app, props){
+function addStrategy(app, props, strategy){
     let [host, prot, url] = getHostProtAndUrl(props)
-    passport.use(props.tag, new LichessStrategy({
+	
+	let strategyProps = {
         clientID: props.clientID,
         clientSecret: props.clientSecret,
         callbackURL: url + "/callback",
         scope: props.scope || ""
-        },
-        function(accessToken, refreshToken, profile, cb) {
-            console.log(`id : ${profile.id}\naccessToken : ${accessToken}\nrefreshToken : ${refreshToken}`)
-		
-            profile.accessToken = accessToken
-		
-			let connectTransaction = classes.Transaction()
-			
-			connectTransaction.author = classes.User(profile)
-			connectTransaction.verifiedUser = classes.User(profile)
-		
-			connectTransaction.topic = "oauthLogin"
-		
-			client.db("app").collection("transactions").insertOne(connectTransaction.serialize()).then(result => {
-				
-			})
-				
-            return cb(null, profile)
-        }
-    ))
+	}
+	
+	let strategyFunc = (accessToken, refreshToken, profile, cb) => {
+		console.log(`id : ${profile.id}\naccessToken : ${accessToken}\nrefreshToken : ${refreshToken}`)
+
+		profile.accessToken = accessToken
+
+		let connectTransaction = classes.Transaction()
+
+		connectTransaction.author = classes.User(profile)
+		connectTransaction.verifiedUser = classes.User(profile)
+
+		connectTransaction.topic = "oauthLogin"
+
+		client.db("app").collection("transactions").insertOne(connectTransaction.serialize()).then(result => {
+
+		})
+
+		return cb(null, profile)
+	}
+
+    passport.use(props.tag, new strategy(strategyProps, strategyFunc))
 	
 	app.get(props.authURL,
         passport.authenticate(props.tag))
@@ -217,7 +221,7 @@ function addLichessStrategy(app, props){
     )
 }
 
-addLichessStrategy(app, {
+addStrategy(app, {
     tag: "lichess",
     clientID: process.env.LICHESS_CLIENT_ID || "some client id",
     clientSecret: process.env.LICHESS_CLIENT_SECRET || "some client secret",
@@ -225,7 +229,17 @@ addLichessStrategy(app, {
 	scope: "",
     failureRedirect: "/?lichesslogin=failed",
     okRedirect: "/?lichesslogin=ok"
-})
+}, LichessStrategy)
+
+addStrategy(app, {
+    tag: "discord",
+    clientID: process.env.DISCORD_CLIENT_ID || "some client id",
+    clientSecret: process.env.DISCORD_CLIENT_SECRET || "some client secret",
+    authURL: "/auth/discord",
+	scope: "identify",
+    failureRedirect: "/?discordlogin=failed",
+    okRedirect: "/?discordlogin=ok"
+}, DiscordStrategy)
 
 app.use("/", express.static(__dirname))
 
@@ -334,7 +348,7 @@ app.get('/', (req, res) => {
   <body>
 
 	<div style="padding: 3px; background-color: #eee; margin-bottom: 6px;">
-		${req.user ? "logged in as <b>" + req.user.username + "</b> | <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a>"} 
+		${req.user ? "logged in as <b>" + req.user.username + "</b> | <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a> | <a href='/auth/discord'>log in with Discord</a>"} 
 	| <a href="/?latest=true">view latest transactions</a> 
 	| <a href="/">home</a>
 	</div>
