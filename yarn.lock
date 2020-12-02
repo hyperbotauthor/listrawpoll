@@ -364,6 +364,13 @@ passport-discord@^0.1.4:
   dependencies:
     passport-oauth2 "^1.5.0"
 
+passport-github@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/passport-github/-/passport-github-1.1.0.tgz#8ce1e3fcd61ad7578eb1df595839e4aea12355d4"
+  integrity sha1-jOHj/NYa11eOsd9ZWDnkrqEjVdQ=
+  dependencies:
+    passport-oauth2 "1.x.x"
+
 passport-lichess@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/passport-lichess/-/passport-lichess-1.1.0.tgz#2eb1a216df7a5bd0c75e38030c85b960c631469c"

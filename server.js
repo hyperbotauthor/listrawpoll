@@ -112,6 +112,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const passport = require('passport')
 const LichessStrategy = require('passport-lichess').Strategy
 const DiscordStrategy = require('passport-discord').Strategy
+const GithubStrategy = require('passport-github').Strategy
 
 let STATE = classes.State()
 
@@ -221,7 +222,7 @@ function addStrategy(app, props, strategy){
     )
 }
 
-addStrategy(app, {
+if(process.env.LICHESS_CLIENT_ID) addStrategy(app, {
     tag: "lichess",
     clientID: process.env.LICHESS_CLIENT_ID || "some client id",
     clientSecret: process.env.LICHESS_CLIENT_SECRET || "some client secret",
@@ -231,7 +232,7 @@ addStrategy(app, {
     okRedirect: "/?lichesslogin=ok"
 }, LichessStrategy)
 
-addStrategy(app, {
+if(process.env.DISCORD_CLIENT_ID) addStrategy(app, {
     tag: "discord",
     clientID: process.env.DISCORD_CLIENT_ID || "some client id",
     clientSecret: process.env.DISCORD_CLIENT_SECRET || "some client secret",
@@ -240,6 +241,16 @@ addStrategy(app, {
     failureRedirect: "/?discordlogin=failed",
     okRedirect: "/?discordlogin=ok"
 }, DiscordStrategy)
+
+if(process.env.GITHUB_CLIENT_ID) addStrategy(app, {
+    tag: "discord",
+    clientID: process.env.GITHUB_CLIENT_ID || "some client id",
+    clientSecret: process.env.GITHUB_CLIENT_SECRET || "some client secret",
+    authURL: "/auth/github",
+	scope: "",
+    failureRedirect: "/?githublogin=failed",
+    okRedirect: "/?githublogin=ok"
+}, GithubStrategy)
 
 app.use("/", express.static(__dirname))
 
