@@ -4,8 +4,20 @@
 const Discord = require('discord.js');
 const discordClient = new Discord.Client();
 
+let sendDiscord = (channelName, message) => {
+	console.log("Discord client not ready", channelName, message)
+}
+
 discordClient.on('ready', () => {
   console.log(`Discord bot logged in as ${discordClient.user.tag}!`);
+	
+	sendDiscord = (channelName, message) => {
+		const channel = discordClient.channels.cache.find(channel => channel.name === channelName)
+		
+		channel.send(message)
+	}
+	
+	sendDiscord("bot-log", "bot logged in")
 });
 
 discordClient.on('message', msg => {
@@ -14,7 +26,9 @@ discordClient.on('message', msg => {
   }
 });
 
-if(process.env.DISCORD_BOT_TOKEN) discordClient.login(process.env.DISCORD_BOT_TOKEN);
+if(process.env.DISCORD_BOT_TOKEN){
+	discordClient.login(process.env.DISCORD_BOT_TOKEN)
+}
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -339,6 +353,8 @@ app.post('/api', (req, res) => {
 		if(!TRANSACTIONS.isOk(transaction)) return
 		
 		TRANSACTIONS.add(transaction)
+		
+		sendDiscord("bot-log", JSON.stringify(transaction.serialize()))
 		
 		client.db("app").collection("transactions").insertOne(transaction.serialize()).then(result => {
 			if(ok){
