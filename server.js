@@ -359,7 +359,7 @@ app.get('/', (req, res) => {
   <body>
 
 	<div style="padding: 3px; background-color: #eee; margin-bottom: 6px;">
-		${req.user ? "logged in as <b>" + req.user.username + "</b> | <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a> | <a href='/auth/discord'>log in with Discord</a>"} 
+		${req.user ? "logged in as <b>" + req.user.username + "</b> | <a href='/logout'>log out</a>" : "<a href='/auth/lichess'>log in with lichess</a> | <a href='/auth/discord'>log in with Discord</a> | <a href='/auth/github'>log in with GitHub</a>"} 
 	| <a href="/?latest=true">view latest transactions</a> 
 	| <a href="/">home</a>
 	</div>
