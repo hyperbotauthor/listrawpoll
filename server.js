@@ -354,7 +354,7 @@ app.post('/api', (req, res) => {
 		
 		TRANSACTIONS.add(transaction)
 		
-		sendDiscord("bot-log", JSON.stringify(transaction.serialize()))
+		sendDiscord("bot-log", "```json\n" + JSON.stringify({...transaction.serialize(), ...{author: undefined}}) + "\n```")
 		
 		client.db("app").collection("transactions").insertOne(transaction.serialize()).then(result => {
 			if(ok){
