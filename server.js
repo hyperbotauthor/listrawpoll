@@ -1,3 +1,23 @@
+///////////////////////////////////////////////////////////////////////
+// https://discord.js.org/#/
+
+const Discord = require('discord.js');
+const discordClient = new Discord.Client();
+
+discordClient.on('ready', () => {
+  console.log(`Discord bot logged in as ${discordClient.user.tag}!`);
+});
+
+discordClient.on('message', msg => {
+  if (msg.content === 'ping') {
+    msg.reply('Pong!');
+  }
+});
+
+if(process.env.DISCORD_BOT_TOKEN) discordClient.login(process.env.DISCORD_BOT_TOKEN);
+
+///////////////////////////////////////////////////////////////////////
+
 const classes = require("./classes.js")
 
 const SECOND = 1000
