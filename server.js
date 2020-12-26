@@ -14,7 +14,7 @@ discordClient.on('ready', () => {
 	sendDiscord = (channelName, message) => {
 		const channel = discordClient.channels.cache.find(channel => channel.name === channelName)
 		
-		channel.send(message)
+		if(process.env.SEND_LOGIN_MESSAGE) channel.send(message)
 	}
 	
 	sendDiscord("bot-log", "bot logged in")
