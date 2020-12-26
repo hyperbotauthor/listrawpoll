@@ -1,30 +1,30 @@
 ///////////////////////////////////////////////////////////////////////
 // https://discord.js.org/#/
 
-const Discord = require('discord.js');
-const discordClient = new Discord.Client();
+const Discord = require('discord.js')
+const discordClient = new Discord.Client()
 
 let sendDiscord = (channelName, message) => {
-	console.log("Discord client not ready", channelName, message)
+	console.log("discord client not ready for sending", channelName, message)
 }
 
-discordClient.on('ready', () => {
-  console.log(`Discord bot logged in as ${discordClient.user.tag}!`);
+discordClient.on('ready', _ => {
+  console.log(`Discord bot logged in as ${discordClient.user.tag}!`)
 	
 	sendDiscord = (channelName, message) => {
 		const channel = discordClient.channels.cache.find(channel => channel.name === channelName)
 		
-		if(process.env.SEND_LOGIN_MESSAGE) channel.send(message)
+		channel.send(message)
 	}
 	
-	sendDiscord("bot-log", "bot logged in")
-});
+	if(process.env.SEND_LOGIN_MESSAGE)  sendDiscord("bot-log", "bot logged in")
+})
 
 discordClient.on('message', msg => {
   if (msg.content === 'ping') {
-    msg.reply('Pong!');
+    msg.reply('pong!')
   }
-});
+})
 
 if(process.env.DISCORD_BOT_TOKEN){
 	discordClient.login(process.env.DISCORD_BOT_TOKEN)
